@@ -1,0 +1,280 @@
+<%= render 'layouts/header' %>
+
+<% provide(:title, 'DDOS proof DNS service') %>
+<div class="jumbotron" align="center">
+  <h1>Plan</h1>
+  <p class="lead">We have 3 different subscription options: choose the one that better fit to you!</p>
+</div>
+<div class="container">
+  <div class="span12">
+    <table id="pricing" class="table table-striped">
+    <col class="features"/>
+    <col class="infocol"/>
+    <col class="price1"/>
+    <col class="price2"/>
+    <col class="price3"/>
+    <col class="price4"/>
+    <thead>
+    <tr id="plans">
+      <th></th>
+      <th></th>
+
+      <th class="span4">
+        <h3>Free DDNS</h3>
+        <p>Try out service</p>
+        <% unless user_signed_in? %>
+          <%= link_to '#', :class => "btn btn-success" do %>
+            Free DDNS service
+          <% end %>
+        <% else %>
+          <%  if current_user.plan == 'FREE' %>
+            <%= link_to '#', :class => "btn btn-success" do %>
+              Current Plan
+            <% end %>
+          <% else %>
+            <%= link_to '#', :class => "btn btn-danger" do %>
+              Can't downgrade
+            <% end %>
+
+          <% end %>
+        <% end %>
+      </th>
+      <th class="span4">
+        <h3>Basic</h3>
+        <p>Automatic HA service</p>
+        <% unless user_signed_in? %>
+          <%= link_to '#', :class => "btn btn-success" do %>
+            <%= Settings.default_basic_plan_price %> UKP/month
+          <% end %>
+        <% else %>
+          <% if current_user.plan ==  'FREE' %>
+            <%= form_tag charges_path do %>
+              <%= hidden_field_tag :plan, 'BASIC' %>
+
+              <script src="https://checkout.stripe.com/checkout.js" class="stripe-button"
+                      data-key="<%= Rails.configuration.stripe[:publishable_key] %>"
+                      data-description="Basic Plan subscription"
+                      data-currency="GPB"
+                      data-email="<%= current_user.email %>"
+                      data-label="Upgrade for <%= Settings.default_basic_plan_price %> UKP/month"
+
+              ></script>
+            <% end %>
+
+          <% elsif current_user.plan ==  'BASIC' %>
+            <%= link_to '#', :class => "btn btn-success" do %>
+              Current Plan
+            <% end %>
+          <% else %>
+            <%= link_to '#', :class => "btn btn-danger" do %>
+              Can't downgrade
+            <% end %>
+          <% end %>
+        <% end %>
+      </th>
+      <th class="span4">
+        <h3>Professional</h3>
+        <p>Load Balancing Service</p>
+        <% unless user_signed_in? %>
+          <%= link_to '#', :class => "btn btn-success" do %>
+            <%= Settings.default_professional_plan_price %> UKP/month
+          <% end %>
+        <% else %>
+          <% if current_user.plan == 'FREE' or current_user.plan == 'BASIC' %>
+            <%= form_tag charges_path do %>
+              <%= hidden_field_tag :plan, 'PROFESSIONAL' %>
+
+              <script src="https://checkout.stripe.com/checkout.js" class="stripe-button"
+                      data-key="<%= Rails.configuration.stripe[:publishable_key] %>"
+                      data-description="Professional Plan subscription"
+                      data-currency="GPB"
+                      data-email="<%= current_user.email %>"
+                      data-label="Upgrade for <%= Settings.default_professional_plan_price %> UKP/month"
+
+              ></script>
+            <% end %>
+          <% elsif current_user.plan == 'PROFESSIONAL' %>
+            <%= link_to '#', :class => "btn btn-success" do %>
+              Current Plan
+            <% end %>
+          <% else %>
+            <%= link_to '#', :class => "btn btn-danger" do %>
+              Can't downgrade
+            <% end %>
+          <% end %>
+        <% end %>
+      </th>
+      <th class="span4">
+        <h3>Enterprise </h3>
+        <p>GeoDNS Service</p>
+        <% unless user_signed_in? %>
+          <%= link_to '#', :class => "btn btn-success" do %>
+            <%= Settings.default_enterprise_plan_price %> UKP/month
+          <% end %>
+        <% else %>
+          <% if current_user.plan == 'FREE' or current_user.plan == 'BASIC' or current_user.plan == 'PROFESSIONAL'%>
+            <%= form_tag charges_path do %>
+              <%= hidden_field_tag :plan, 'ENTERPRISE' %>
+
+              <script src="https://checkout.stripe.com/checkout.js" class="stripe-button"
+                      data-key="<%= Rails.configuration.stripe[:publishable_key] %>"
+                      data-description="Professional Plan subscription"
+                      data-currency="GPB"
+                      data-email="<%= current_user.email %>"
+                      data-label="Upgrade for <%= Settings.default_enterprise_plan_price %> UKP/month"
+
+              ></script>
+            <% end %>
+          <% else %>
+            <%= link_to '#', :class => "btn btn-success" do %>
+              Current Plan
+            <% end %>
+          <% end %>
+        <% end %>
+      </th>
+
+    </tr>
+    </thead>
+    <tbody>
+    <tr class="big">
+      <td class="feature span2">Domains in the plan</td>
+      <td class="info"><a href="#ditutto" class="icon-question-sign" rel="tooltip" title="Number of domains in the plan. In the service, you can register a domain with TLD .com, .net, .org, .biz, .info, .it, .eu"></a></td>
+      <td>
+        <%= Settings.default_domains_per_free_plan %>
+      </td>
+      <td>
+        <%= Settings.default_domains_per_basic_plan %>
+      </td>
+      <td>
+        <%= Settings.default_domains_per_professional_plan %>
+      </td>
+      <td>
+        <%= Settings.default_domains_per_enterprise_plan %>
+      </td>
+    </tr>
+
+    <tr class="big">
+      <td class="feature span2">Always<b>Resolve</b> service in the plan</td>
+      <td class="info"><a href="#ditutto" class="icon-question-sign" rel="tooltip" title="Number of AlwaysResolve services in the plan"></a></td>
+      <td>
+        <%= Settings.default_ars_per_free_plan %>
+      </td>
+      <td>
+        <%= Settings.default_ars_per_basic_plan %>
+      </td>
+      <td>
+        <%= Settings.default_ars_per_professional_plan %>
+      </td>
+      <td>
+        <%= Settings.default_ars_per_enterprise_plan %>
+      </td>
+
+    </tr>
+
+
+    <tr class="big">
+      <td class="feature span2">Max records per domain</td>
+      <td class="info"><a href="#ditutto" class="icon-question-sign" rel="tooltip" title="Number of records for domain"></a></td>
+      <td>
+        <%= Settings.default_records_per_free_plan %>
+      </td>
+      <td>
+          <%= Settings.default_records_per_basic_plan %>
+      </td>
+      <td>
+          <%= Settings.default_records_per_professional_plan %>
+      </td>
+      <td>
+          <%= Settings.default_records_per_enterprise_plan %>
+      </td>
+
+    </tr>
+
+    <tr>
+      <td class="feature">Rest API</td>
+      <td><a href="#ditutto" class="icon-question-sign" rel="tooltip" title="REST API for all service options"></a></td>
+      <td><a href="#ditutto" class="badge badge-success"rel="tooltip" title=""><i class="icon-ok icon-white"></i></a></td>
+      <td><a href="#ditutto" class="badge badge-success"rel="tooltip" title=""><i class="icon-ok icon-white"></i></a></td>
+      <td><a href="#ditutto" class="badge badge-success"rel="tooltip" title=""><i class="icon-ok icon-white"></i></a></td>
+      <td><a href="#ditutto" class="badge badge-success"rel="tooltip" title=""><i class="icon-ok icon-white"></i></a></td>
+
+    </tr>
+
+    <tr>
+      <td class="feature">Anycast Network</td>
+      <td><a href="#ditutto" class="icon-question-sign" rel="tooltip" title="Easy panel: you don't have to be a network guru to manage an high class service"></a></td>
+      <td><a href="#ditutto" class="badge badge-success"rel="tooltip" title=""><i class="icon-ok icon-white"></i></a></td>
+      <td><a href="#ditutto" class="badge badge-success"rel="tooltip" title=""><i class="icon-ok icon-white"></i></a></td>
+      <td><a href="#ditutto" class="badge badge-success"rel="tooltip" title=""><i class="icon-ok icon-white"></i></a></td>
+      <td><a href="#ditutto" class="badge badge-success"rel="tooltip" title=""><i class="icon-ok icon-white"></i></a></td>
+
+    </tr>
+
+
+
+    <tr>
+      <td class="feature">High Availability</td>
+      <td><a href="#ditutto" class="icon-question-sign" rel="tooltip" title="High Availability server checks for an active/passive cluster"></a></td>
+      <td><a href="#ditutto" class="badge badge-success"rel="tooltip" title=""><i class="icon-ok icon-white"></i></a></td>
+      <td><a href="#ditutto" class="badge badge-success"rel="tooltip" title=""><i class="icon-ok icon-white"></i></a></td>
+      <td><a href="#ditutto" class="badge badge-success"rel="tooltip" title=""><i class="icon-ok icon-white"></i></a></td>
+      <td><a href="#ditutto" class="badge badge-success"rel="tooltip" title=""><i class="icon-ok icon-white"></i></a></td>
+
+    </tr>
+
+    <tr>
+      <td class="feature">Load Balancing</td>
+      <td><a href="#ditutto" class="icon-question-sign" rel="tooltip" title="Server monitoring and traffic load balancing"></a></td>
+      <td></td>
+      <td></td>
+      <td><a href="#ditutto" class="badge badge-success"rel="tooltip" title=""><i class="icon-ok icon-white"></i></a></td>
+      <td><a href="#ditutto" class="badge badge-success"rel="tooltip" title=""><i class="icon-ok icon-white"></i></a></td>
+
+    </tr>
+
+
+    <tr>
+      <td class="feature">Weight balancing</td>
+      <td><a href="#ditutto" class="icon-question-sign" rel="tooltip" title="Server monitoring and traffic load balancing with geo distripution"></a></td>
+      <td></td>
+      <td></td>
+      <td><a href="#ditutto" class="badge badge-success"rel="tooltip" title=""><i class="icon-ok icon-white"></i></a></td>
+      <td><a href="#ditutto" class="badge badge-success"rel="tooltip" title=""><i class="icon-ok icon-white"></i></a></td>
+
+    </tr>
+
+
+
+
+    <tr>
+      <td class="feature">Geo Distributed</td>
+      <td><a href="#ditutto" class="icon-question-sign" rel="tooltip" title="Advanced panel: if you want to manage all DNS options"></a></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td><a href="#ditutto" class="badge badge-success"rel="tooltip" title=""><i class="icon-ok icon-white"></i></a></td>
+
+    </tr>
+
+    <tr>
+      <td class="feature">SLA</td>
+      <td><a href="#ditutto" class="icon-question-sign" rel="tooltip" title="Service Level Agreements: we refund montly charge in case of network problems"></a></td>
+      <td>99.9%/year</td>
+      <td>99.9%/year</td>
+      <td>99.99%/year</td>
+      <td>99.999%/year</td>
+
+    </tr>
+    <tr>
+      <td class="feature">Support</td>
+      <td><a href="#ditutto" class="icon-question-sign" rel="tooltip" title="Phone support by our local partners"></a></td>
+      <td>Forum</td>
+      <td>Mail/CRM</td>
+      <td>Online Chat</td>
+      <td>Online Chat and Phone</td>
+
+    </tr>
+    </tbody>
+    </table>
+  </div>
+</div>

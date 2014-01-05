@@ -1,0 +1,8 @@
+<% content_for?(:title)          ? title(yield(:title).to_s)                                            : title('DDOS proof Anycast DDNS service') %>
+<% content_for?(:keywords)       ? keywords(yield(:keywords).to_s)                                      : keywords('AlwaysResolve, DNS, DDNS, Dynamic DNS, Load Balancing, High Availability, dyndns, dyndns.org, check, server, anycast') %>
+<% content_for?(:description)    ? description(yield(:description).to_s)                                : description('The DNS, if site failure is not an option. We built the most resilent, safe and available DNS service on the planet! Try it free for 30 days or more!') %>
+<% content_for?(:og_title)       ? (set_meta_tags :og => {:title => yield(:og_title).to_s})             : (set_meta_tags :og => {:title => :'The DNS, if site failure is not an option.'}) %>
+<% content_for?(:og_description) ? (set_meta_tags :og => {:description => yield(:og_description).to_s}) : (set_meta_tags :og => {:description => :'We built the most resilient, safe and available DNS service on the planet! You can manage site replication and distribution worldwide, so it will just AlwaysResolve! Forget downtime, just think Always Uptime garanteed.'}) %>
+<% content_for?(:og_site_name)   ? (set_meta_tags :og => {:site_name => yield(:og_site_name).to_s})     : (set_meta_tags :og => {:site_name => :'AlwaysResolve'}) %>
+<% content_for?(:og_type)        ? (set_meta_tags :og => {:type => yield(:og_type).to_s})               : (set_meta_tags :og => {:type => :'website'}) %>
+<% content_for?(:og_image)       ? (set_meta_tags :og => {:image => yield(:og_image).to_s})             : (set_meta_tags :og => {:image => :'https://www.alwaysresolve.com/assets/logo_ar.png'}) %>

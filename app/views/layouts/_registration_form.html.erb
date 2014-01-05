@@ -1,0 +1,182 @@
+<% provide(:title, "Free DDNS Service") %>
+<% provide(:description, "Here you can create your free record on our Anycast DDNS server! Free rest API, free IP monitor and free courtesy page: it's AlwaysResolve!") %>
+<% provide(:og_title, "Free DDNS Service") %>
+<% provide(:og_description, "Here you can create your free record on our Anycast DDNS server! Free rest API, free IP monitor and free courtesy page: it's AlwaysResolve!") %>
+<% provide(:keywords, 'AlwaysResolve, DNS, DDNS, Dynamic DNS, record, free, dyndns, dyndns.org, anycast') %>
+<%= render 'layouts/header' %>
+<div class="black-bg" >
+  <div class="container">
+    <h1>The DNS, <br/>
+      if site failure <br/>
+      is not an option.</h1>
+  </div>
+
+  <div class="spaceman">
+    <%= image_tag 'astronauta.jpg' %>
+  </div>
+
+  <div class="back-image">
+    <div class="container">
+      <h2 class="lead" >We built the most resilient, safe and available DNS service on the planet!<br/>
+        You can manage site replication and distribution worldwide, so it will just Always<strong>Resolve</strong>! <br/>
+        Forget downtime, just think Always Uptime  garanteed.</h2>
+    </div>
+  </div>
+</div>
+
+<p><br/></p>
+
+
+<div class="container">
+  <%= render 'layouts/flashes' %>
+  <% if user_signed_in? %>
+    <div class="well">
+      <%= form_for(@user, :url => update_free_ddns_path, :html => {:method => :put, :role => 'form', :class => 'form-horizontal'}) do |f| %>
+        <div class="form-group">
+          <div class="col-sm-offset-2 col-sm-10">
+            <div class="input-group">
+              <span class="input-group-addon">http://</span>
+              <%= f.text_field :free_third_level, :class => 'form-control', placeholder: "your-name" %>
+              <span class="input-group-addon">.alwr.es</span>
+            </div>
+          </div>
+        </div>
+        <div class="form-group">
+          <%= f.label :free_ip_address, 'IP Address', :class => "col-sm-2 control-label" %>
+          <div class="col-sm-10">
+            <%= f.text_field :free_ip_address, :class => 'form-control', placeholder: "192.168.0.1" %>
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="col-sm-offset-2 col-sm-10">
+            <%= f.submit 'Update my free DDNS', :class => 'btn btn-primary' %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+    <div class="row">
+      <div class="col-sm-12">
+        <h4>To use our free service</h4>
+        <p>Use the form above to administer your record. You can also automate the change, simple as getting a page: if you do that, the DDNS record will resolve to the
+          IP address of your server as we see it. For example (substitute "password" with your password):</p>
+        <pre>curl --user <%=@user.email%>:password https://www.alwaysresolve.com/ddns.json</pre>
+        <p>If you upgrade to our profr</p>
+      </div>
+    </div>
+  <% else %>
+
+    <div class="well">
+
+      <%= form_for(resource, :as => resource_name, :url => registration_path(resource_name),
+                   :html => {:method => :post, :role => 'form', :class => 'form-horizontal'}) do |f| %>
+
+        <div class="form-group">
+          <div class="col-sm-offset-2 col-sm-10">
+            <p class="lead">
+              <% if devise_error_messages!.empty? %>
+                Sign up for free now and you'll receive your first DDNS record for life!<br/>
+              <% else %>
+                <%= devise_error_messages! %>
+              <% end %>
+            </p>
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="col-sm-offset-2 col-sm-10">
+            <div class="input-group">
+              <span class="input-group-addon">http://</span>
+              <%= f.text_field :free_third_level, :class => 'form-control', placeholder: "your-name" %>
+              <span class="input-group-addon">.alwr.es</span>
+            </div>
+          </div>
+        </div>
+        <div class="form-group">
+          <%= f.label :free_ip_address, 'IP Address', :class => "col-sm-2 control-label" %>
+          <div class="col-sm-10">
+            <%= f.text_field :free_ip_address, :class => 'form-control', placeholder: "192.168.0.1" %>
+          </div>
+        </div>
+        <div class="form-group">
+          <%= f.label :email, 'Email', :class => "col-sm-2 control-label" %>
+          <div class="col-sm-10">
+            <%= f.email_field :email, :class => 'form-control email', placeholder: "user@domain.tld" %>
+          </div>
+        </div>
+        <div class="form-group">
+          <%= f.label :password, 'Password', :class => "col-sm-2 control-label" %>
+          <div class="col-sm-10">
+            <%= f.password_field :password, :class => 'form-control' %>
+          </div>
+        </div>
+        <div class="form-group">
+          <%= f.label :password_confirmation, 'Confirm', :class => "col-sm-2 control-label" %>
+          <div class="col-sm-10">
+            <%= f.password_field :password_confirmation, :class => 'form-control' %>
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="col-sm-offset-2 col-sm-10">
+            <%= f.submit 'Activate my free account', :class => 'btn btn-primary' %>
+          </div>
+        </div>
+      <% end %>
+
+    </div>
+  <% end %>
+
+  <div class="row marketing">
+    <div class="col-md-1">
+      <%= image_tag 'downtime_protection.png', :class => 'img-responsive' %>
+    </div>
+    <div class="col-md-5">
+      <h4>Downtime Protection</h4>
+      <p>AlwaysResolve protects and accelerates any website online. If your
+        website is down, engines like Google will downgrade you and you'll
+        loose rankings. </p>
+    </div>
+    <div class="col-md-1">
+      <%= image_tag 'high_aivalability.png', :class => 'img-responsive' %>
+    </div>
+    <div class="col-md-5">
+
+      <h4>High Availability</h4>
+      <p>No Single server can ever guarantee 100% reliability you need two or more to avoid a failure. We can provide an automatic "hot switch" between them.  </p>
+    </div>
+  </div>
+
+  <div class="row marketing">
+    <div class="col-md-1">
+      <%= image_tag 'load_balancing.png', :class => 'img-responsive' %>
+    </div>
+    <div class="col-md-5">
+      <h4>Load Balancing</h4>
+      <p>We can actively monitor the reachability of your servers located in different data centers, load balancing them and excluding those with problems.  </p>
+    </div>
+    <div class="col-md-1">
+      <%= image_tag 'geo_distribution.png', :class => 'img-responsive' %>
+    </div>
+    <div class="col-md-5">
+      <h4>Geo Distribution</h4>
+      <p>We can  manage the geolocation of the requester's IP address and redirect them automatically to a specific geographic area's server of your choice. </p>
+
+    </div>
+  </div>
+  <div class="row marketing">
+    <div class="col-md-1">
+      <%= image_tag 'simple_management.png', :class => 'img-responsive' %>
+    </div>
+    <div class="col-md-5">
+      <h4>Simple Management Portal</h4>
+      <p>We have developed an easy to use admin panel with two different views based on your networking skills.  </p>
+
+    </div>
+    <div class="col-md-1">
+      <%= image_tag 'blistering_fast.png', :class => 'img-responsive' %>
+    </div>
+    <div class="col-md-5">
+
+      <h4>Blistering Fast</h4>
+      <p>Our DNS default TTL is 60 seconds, no cache. Better speed thanks to Anycast tech and propriety DNS engine optimized for dynamic resolution.</p>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,37 @@
+default_basic_plan_price: 9.95
+default_professional_plan_price: 19.95
+default_enterprise_plan_price: 39.95
+
+default_always_resolve_price: 5
+default_domain_price: 5
+
+default_basic_plan_every: 1
+default_professional_plan_every: 1
+default_enterprise_plan_every: 1
+default_always_resolve_every: 1
+default_domain_every: 1
+default_web_cache_every: 1
+
+default_domains_per_free_plan: 0
+default_domains_per_basic_plan: 1
+default_domains_per_professional_plan: 5
+default_domains_per_enterprise_plan: 10
+
+default_ars_per_free_plan: 0
+default_ars_per_basic_plan: 1
+default_ars_per_professional_plan: 10
+default_ars_per_enterprise_plan: 30
+
+default_records_per_free_plan: 1
+default_records_per_basic_plan: 10
+default_records_per_professional_plan: 20
+default_records_per_enterprise_plan: 30
+
+free_record: 2
+basic_record: 2
+professional_record: 6
+enterprise_record: 8
+
+cheddar_product_code: 'ALWAYSRESOLVE'
+cheddar_username: 'a.zuin@moyd.co'
+cheddar_password: 'd2d18eb65ec06e532d2370347a7f6138'

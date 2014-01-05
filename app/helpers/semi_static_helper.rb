@@ -1,0 +1,2 @@
+module SemiStaticHelper
+end

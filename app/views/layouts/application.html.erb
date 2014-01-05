@@ -1,0 +1,27 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="msvalidate.01" content="FE15DE16FAA7CC4007F6F52D2ACDF98E" />
+  <%= display_meta_tags :site => 'AlwaysResolve'%>
+  <%= stylesheet_link_tag    "application", media: "all", "data-turbolinks-track" => true %>
+  <%= javascript_include_tag "application", "data-turbolinks-track" => true %>
+  <%= csrf_meta_tags %>
+  <%= analytics_init if Rails.env.production? %>
+  <link href="/assets/favicon.ico" rel="shortcut icon"/>
+</head>
+<body>
+<%= render 'layouts/navigation' %>
+
+<%= yield %>
+
+<div class="container-narrow">
+  <div class="page-footer">
+    <%= render 'layouts/footer' %>
+  </div>
+</div>
+
+</body>
+</html>
