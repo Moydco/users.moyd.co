@@ -37,6 +37,15 @@ end
 
 # Use unicorn as the app server
 gem 'unicorn'
+gem 'passenger'
+
+# Use Capistrano for deployment
+gem 'capistrano', group: :development
+gem 'capistrano-bundler', group: :development
+gem 'capistrano-rails', group: :development
+gem 'capistrano-rvm', group: :development
+gem 'capistrano-ext', group: :development
+gem 'newrelic_rpm'
 
 # Use Capistrano for deployment
 # gem 'capistrano', group: :development
