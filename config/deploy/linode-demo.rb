@@ -24,7 +24,7 @@ role :db,  %w{212.71.239.114}
 # you can see them in [net/ssh documentation](http://net-ssh.github.io/net-ssh/classes/Net/SSH.html#method-c-start)
 # set it globally
 set :ssh_options, {
-    user: %w(shapi_moyd),
+    user: %w(shalwres),
     forward_agent: false,
     auth_methods: %w(publickey),
     port: 12322
