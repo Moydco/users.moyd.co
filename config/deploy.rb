@@ -1,4 +1,4 @@
-require 'capistrano/puma'
+SSHKit.config.command_map[:rake] = "bundle exec rake"
 
 set :application, 'alwaysresolve'
 set :repo_url, 'git@git.azcloud.it:alberto/alwaysresolve_2-0.git'
