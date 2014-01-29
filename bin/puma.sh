@@ -5,9 +5,9 @@
 
 # The script will start with config set by $PUMA_CONFIG_FILE by default
 
-PUMA_CONFIG_FILE=config/puma.rb
-PUMA_PID_FILE=tmp/pids/puma.pid
-PUMA_SOCKET=tmp/sockets/puma.sock
+PUMA_CONFIG_FILE=/var/www/alwaysresolve.com/web/current/config/puma.rb
+PUMA_PID_FILE=/var/www/alwaysresolve.com/web/current/tmp/pids/puma.pid
+PUMA_SOCKET=/var/www/alwaysresolve.com/web/current/tmp/sockets/puma.sock
 
 # check if puma process is running
 puma_is_running() {
@@ -33,9 +33,13 @@ case "$1" in
     echo "Starting puma..."
     rm -f $PUMA_SOCKET
     if [ -e $PUMA_CONFIG_FILE ] ; then
-      bundle exec puma --config $PUMA_CONFIG_FILE
+      su shalwres <<'EOF'
+cd /var/www/alwaysresolve.com/web/current && RAILS_ENV=production ~/.rvm/bin/rvm jruby-1.7.9@alwaysresolve do bundle exec puma --config $PUMA_CONFIG_FILE
+EOF
     else
-      bundle exec puma --daemon --bind unix://$PUMA_SOCKET --pidfile $PUMA_PID_FILE
+      su shalwres <<'EOF'
+cd /var/www/alwaysresolve.com/web/current && RAILS_ENV=production ~/.rvm/bin/rvm jruby-1.7.9@alwaysresolve do bundle exec puma --daemon --bind unix://$PUMA_SOCKET --pidfile $PUMA_PID_FILE
+EOF
     fi
 
     echo "done"

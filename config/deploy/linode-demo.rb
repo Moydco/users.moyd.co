@@ -49,4 +49,4 @@ set :rvm_ruby_version, 'jruby-1.7.9@alwaysresolve'
 set :rails_env, :production
 
 #load 'deploy/assets'
-require 'capistrano/puma'
+#require 'capistrano/puma'

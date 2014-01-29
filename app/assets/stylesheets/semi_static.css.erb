@@ -1,6 +1,8 @@
-// Place all the styles related to the semi_static controller here.
-// They will automatically be included in application.css.
-// You can use Sass (SCSS) here: http://sass-lang.com/
+/*
+ Place all the styles related to the semi_static controller here.
+ They will automatically be included in application.css.
+ You can use Sass (SCSS) here: http://sass-lang.com/
+ */
 
 .black-bg {
   background-color: #000000;
@@ -16,7 +18,7 @@
 }
 
 .back-image {
-  background: url("/assets/slide-cover.jpg");
+  background: url(<%= asset_path 'slide-cover.jpg' %>);
   height: 200px;
   background-size: 100% 210px;
   padding-top: 70px;
