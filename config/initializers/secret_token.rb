@@ -9,4 +9,4 @@
 
 # Make sure your secret_key_base is kept private
 # if you're sharing your code publicly.
-AlwaysResolve20::Application.config.secret_key_base = '5208740ebd77ed7c905cc9c66d9949c43ed3b60afcbdd8e5221ada7f188f29d648a7f35c683fa0bd5aeea3c8a9d4a62245939f086bf803b05d77251b55101dc7'
+UsersMoydCo::Application.config.secret_key_base = '5208740ebd77ed7c905cc9c66d9949c43ed3b60afcbdd8e5221ada7f188f29d648a7f35c683fa0bd5aeea3c8a9d4a62245939f086bf803b05d77251b55101dc7'

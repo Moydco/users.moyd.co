@@ -3,4 +3,4 @@
 
 require File.expand_path('../config/application', __FILE__)
 
-AlwaysResolve20::Application.load_tasks
+UsersMoydCo::Application.load_tasks

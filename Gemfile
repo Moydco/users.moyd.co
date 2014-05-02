@@ -58,13 +58,8 @@ gem 'rails_config'
 
 # Form
 gem 'simple_form'
+gem 'request_store'
 gem 'country_select'
-
-# SEO
-gem 'meta-tags', :require => 'meta_tags'
-gem 'google-analytics-rails'
-gem 'dynamic_sitemaps'
-gem 'social-share-button'
 
 # Autenticazione
 gem 'devise'
@@ -72,10 +67,8 @@ gem 'cancan'
 gem 'rolify'
 
 # DB
+gem 'multi_json'
 gem 'mongoid', github: 'mongoid/mongoid'
-
-# Aiuti in sviluppo
-gem 'letter_opener', group: :development
 
 # Fatturazione
 gem 'stripe', :git => 'https://github.com/stripe/stripe-ruby'

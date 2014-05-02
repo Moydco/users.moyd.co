@@ -3,7 +3,6 @@ class ChargesController < ApplicationController
   def index
     customer = Stripe::Customer.retrieve(current_user.stripe_id)
     @subscription = customer.subscription
-    @invoices = @customer.invoices
     @upcoming_invoices = @customer.upcoming_invoices
   end
 

@@ -38,7 +38,7 @@ cd /var/www/alwaysresolve.com/web/current && RAILS_ENV=production ~/.rvm/bin/rvm
 EOF
     else
       su shalwres <<'EOF'
-cd /var/www/alwaysresolve.com/web/current && RAILS_ENV=production ~/.rvm/bin/rvm jruby-1.7.9@alwaysresolve do bundle exec puma --daemon --bind unix:///var/www/alwaysresolve.com/web/current/tmp/puma.sock --pidfile /var/www/alwaysresolve.com/web/current/tmp/puma.pid
+cd /var/www/alwaysresolve.com/web/current && RAILS_ENV=production ~/.rvm/bin/rvm jruby-1.7.9@alwaysresolve do bundle exec puma -e production -d -b unix:///var/www/alwaysresolve.com/web/current/tmp/puma.sock --pidfile /var/www/alwaysresolve.com/web/current/tmp/puma.pid
 EOF
     fi
 

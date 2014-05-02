@@ -5,8 +5,10 @@ class ApplicationController < ActionController::Base
 
   # This is our new function that comes before Devise's one
   before_filter :authenticate_user_from_token!
+
   # This is Devise's authentication
   before_filter :authenticate_user!, :if => :protected_controller?
+  before_filter :set_user_api_token, :if => :protected_controller?
 
   before_action :configure_devise_permitted_parameters, :if => :devise_controller?
 
@@ -17,7 +19,7 @@ class ApplicationController < ActionController::Base
   protected
 
   def configure_devise_permitted_parameters
-    registration_params = [:free_third_level, :free_ip_address, :email, :password, :password_confirmation, :first_name, :last_name, :company, :vat, :notes]
+    registration_params = [:email, :password, :password_confirmation, :first_name, :last_name, :company, :vat, :notes]
 
     if params[:action] == 'update'
       devise_parameter_sanitizer.for(:account_update) {
@@ -38,11 +40,19 @@ class ApplicationController < ActionController::Base
     # in the database with the token given in the params, mitigating
     # timing attacks.
     if user && Devise.secure_compare(user.authentication_token, params[:user_token])
+      puts "RequestStore Token: #{RequestStore.store[:api_token]}"
       sign_in user, store: false
     end
   end
 
   def protected_controller?
     controller_name == 'charges'
+  end
+
+  def set_user_api_token
+    if user_signed_in?
+      puts "Dentro a set_user_api_token: #{current_user}"
+      RequestStore.store[:api_token] = current_user.authentication_token
+    end
   end
 end

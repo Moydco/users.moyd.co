@@ -1,15 +1,15 @@
 class User
   include Mongoid::Document
+
   rolify
 
   before_save :ensure_authentication_token
 
-  before_update :moyd_update_free_ddns, :if => Proc.new {|a| a.free_third_level.present? and a.free_ip_address.present?}
+  #before_update :moyd_update_free_ddns, :if => Proc.new {|a| a.free_third_level.present? and a.free_ip_address.present?}
 
-  after_create :moyd_create_customer
-  after_create :moyd_add_free_ddns, :if => Proc.new {|a| a.free_third_level.present? and a.free_ip_address.present?}
+  #after_create :moyd_add_free_ddns, :if => Proc.new {|a| a.free_third_level.present? and a.free_ip_address.present?}
 
-  before_destroy :moyd_delete_free_ddns, :moyd_delete_customer
+  #before_destroy :moyd_delete_free_ddns, :moyd_delete_customer
 
   # Include default devise modules. Others available are:
   # :token_authenticatable, :confirmable
@@ -53,9 +53,6 @@ class User
   ## Extra fields
   field :first_name, :type => String, :default => 'Unknown'
   field :last_name, :type => String, :default => 'Name'
-  field :free_third_level, :type => String
-  field :free_ip_address, :type => String
-  field :third_level_id, :type => String
   field :company, :type => String, :default => nil
   field :notes, :type => String, :default => nil
   field :vat, :type => String, :default => nil
@@ -65,7 +62,6 @@ class User
   attr_accessor :stripe_token
 
   validates_presence_of :email
-  validates_uniqueness_of :free_third_level, :allow_nil => true
 
   def name
     unless self.first_name.nil?
@@ -79,33 +75,6 @@ class User
     if authentication_token.blank?
       self.authentication_token = generate_authentication_token
     end
-  end
-
-  def moyd_create_customer
-    unless ApiMoyd.new.create_user(self.authentication_token)
-      errors.add(:cheddar, 'Our DNS returned an error in user creation')
-      #raise 'Our DNS returned an error in user creation'
-    end
-  end
-
-  def moyd_delete_customer
-    unless ApiMoyd.new.delete_user(self.authentication_token)
-      errors.add(:cheddar, 'Our DNS returned an error in user deletion')
-      #raise 'Our DNS returned an error in user deletion'
-    end
-  end
-
-  def moyd_add_free_ddns
-    self.third_level_id = ApiMoyd.new.create_free_ddns(self.free_third_level, self.free_ip_address)
-    self.save
-  end
-
-  def moyd_update_free_ddns
-    self.third_level_id = ApiMoyd.new.update_free_ddns(self.third_level_id, self.free_third_level, self.free_ip_address)
-  end
-
-  def moyd_delete_free_ddns
-    self.third_level_id = ApiMoyd.new.delete_free_ddns(self.third_level_id)
   end
 
   private
