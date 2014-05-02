@@ -1,5 +1,5 @@
-set :application, 'alwaysresolve'
-set :repo_url, 'git@git.azcloud.it:alberto/alwaysresolve_2-0.git'
+set :application, 'users.moyd.co'
+set :repo_url, 'git@git.azcloud.it:alberto/users-moyd-co.git'
 
 # ask :branch, proc { `git rev-parse --abbrev-ref HEAD`.chomp }
 # set :scm, :git
@@ -13,6 +13,7 @@ set :repo_url, 'git@git.azcloud.it:alberto/alwaysresolve_2-0.git'
 
 # set :default_env, { path: "/opt/ruby/bin:$PATH" }
 # set :keep_releases, 5
+set :linked_files, %w{config/settings.local.yml config/mongoid.yml}
 
 namespace :deploy do
 

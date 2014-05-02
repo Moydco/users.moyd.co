@@ -16,5 +16,7 @@
 /tmp
 
 config/settings.local.yml
+config/mongoid.yml
 config/settings/*.local.yml
 config/environments/*.local.yml
+
