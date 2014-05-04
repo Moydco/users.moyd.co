@@ -11,6 +11,7 @@
  *= require_self
  *= require_tree .
  *= require bootstrap
+ *= require pwdcalc
  */
 
 /* Override Bootstrap 3 font locations */

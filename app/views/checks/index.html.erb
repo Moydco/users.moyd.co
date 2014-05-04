@@ -1,0 +1,6 @@
+<% if signed_in? %>
+  Hello, <%= current_user['email'] %>
+  <%=link_to('Logout', signout_path, method: :delete) %>
+<% else %>
+  <%=link_to('Login', signin_path) %> | <%= link_to('Register', signup_path) %>
+<% end %>

@@ -58,17 +58,18 @@ gem 'rails_config'
 
 # Form
 gem 'simple_form'
-gem 'request_store'
-gem 'country_select'
+gem 'pwdcalc'
 
 # Autenticazione
-gem 'devise'
-gem 'cancan'
-gem 'rolify'
+gem 'bcrypt-ruby'
+gem 'jwt'
 
 # DB
 gem 'multi_json'
 gem 'mongoid', github: 'mongoid/mongoid'
+gem 'redis'
+gem 'redis-namespace'
+gem 'bloombroom'
 
 # Fatturazione
 gem 'stripe', :git => 'https://github.com/stripe/stripe-ruby'

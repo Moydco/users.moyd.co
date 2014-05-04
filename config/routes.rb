@@ -1,13 +1,15 @@
 UsersMoydCo::Application.routes.draw do
-  devise_for :users
+
+  resources :checks, :only => [:index, :create]
 
   resources :users
-  resources :semi_static, :only => [:index, :check_token]
-  resources :charges
+  resources :sessions, :only => [:new, :create, :destroy]
 
-  post 'check_token' => 'semi_static#check_token'
+  root 'checks#index'
 
-  root 'semi_static#index'
+  match '/signup',  to: 'users#new',            via: 'get'
+  match '/signin',  to: 'sessions#new',         via: 'get'
+  match '/signout', to: 'sessions#destroy',     via: 'delete'
 
   mount StripeEvent::Engine => '/stripe-callbacks'
 end

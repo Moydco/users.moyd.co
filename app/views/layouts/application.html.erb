@@ -11,9 +11,10 @@
   <link href="/assets/favicon.ico" rel="shortcut icon"/>
 </head>
 <body>
-
-<%= yield %>
-
+<%= render 'layouts/flashes' %>
+<div class="container">
+  <%= yield %>
+</div>
 <div class="container-narrow">
   <div class="page-footer">
     <%= render 'layouts/footer' %>
