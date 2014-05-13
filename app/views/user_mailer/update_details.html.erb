@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+</head>
+<body>
+<h1>Hello <%= @user.user_detail.name %>,</h1>
+<p>
+  I’m Norby. You may remember me – we met when you registred at <%= @application %>.
+</p>
+<p>
+  Anyway, I just wanted to say thanks for updating your Account Details
+  for us. I know our customers are busy people, so I appreciate you taking
+  the time to help out.
+</p>
+<p>
+  Thanks again,
+</p>
+<p>
+  Norby, the Robot
+</p>
+<p>
+  P.S. Remember, I'm just a bit of software. So, if you have any questions
+  please first read FAQ at our web site <%= link_to @url, @url %> first
+</p>
+</body>
+</html>

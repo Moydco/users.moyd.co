@@ -1,9 +1,21 @@
 UsersMoydCo::Application.routes.draw do
 
-  resources :checks, :only => [:index, :create]
+  resources :checks, only: [:index, :create]
 
-  resources :users
-  resources :sessions, :only => [:new, :create, :destroy]
+  resources :users do
+    resource :user_details, only: [:edit, :update]
+    resources :topups,      only: [:show, :create, :edit, :update]
+    resources :vouchers,    only: [:create]
+    resources :consumes,    only: [:create]
+
+    member do
+      get :validate_token
+      put :validate_token_do
+      get :resend_confirm_email
+    end
+  end
+
+  resources :sessions, only: [:new, :create, :destroy]
 
   root 'checks#index'
 

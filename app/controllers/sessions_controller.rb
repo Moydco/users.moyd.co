@@ -1,34 +1,58 @@
 class SessionsController < ApplicationController
+
+  # Log in form
   def new
     if signed_in?
-      render text: "Already authenticated with #{@current_user.email}"
+      render text: "Already authenticated with #{@current_user[:email]}"
     end
   end
 
+  # sign in the user
   def create
-
-    user = User.find_by(email: params[:session][:email])
+    # find the user in persistend DB
+    user = User.where(email: params[:session][:email]).first
+    # check if the password is correct
     if !user.nil? && user.authenticate(params[:session][:password])
-      if Settings.multi_application.downcase == 'false' or (Settings.multi_application.downcase == 'true' and !user.applications.find(application_id).nil)
+      # check the authority to log in tho this application
+      if Settings.multi_application.downcase == 'false' or
+          (Settings.multi_application.downcase == 'true' and !user.applications.find(application_id).nil?) or
+          (Settings.multi_application.downcase == 'true' and user.applications.find(application_id).nil? and Settings.multi_application_login.downcase == 'true')
+        # Sign in user definitively
         sign_in user
-        # redirect_to user
-        render text: token
+        if user.is_admin?
+          redirect_to root_path
+        else
+          # Redirect to user page if the user have not full invoice data, else redirect to application
+          if user.data_complete? and user.confirmed?
+            if Settings.multi_application.downcase == 'false'
+              redirect_to Settings.single_application_mode_url + Settings.single_application_mode_path
+            else
+              redirect_to application.url + application.path
+            end
+          else
+            redirect_to edit_user_user_details_path(user)
+          end
+        end
       else
-        flash.now[:error] = 'Invalid application for this user' # Not quite right!
+        # Error: application isn't correct
+        flash.now[:error] = 'Invalid application for this user'
         render 'new'
-        # render status: 404
       end
     else
-      flash.now[:error] = 'Invalid email/password combination' # Not quite right!
+      # Error: wrong user/pass
+      flash.now[:error] = 'Invalid email/password combination'
       render 'new'
-      # render status: 404
     end
   end
 
+  # sign out user and redirect to application home
   def destroy
-
     sign_out
-    redirect_to root_url
+    if Settings.multi_application.downcase == 'false'
+      redirect_to Settings.single_application_mode_url
+    else
+      redirect_to application.url
+    end
   end
 
 end

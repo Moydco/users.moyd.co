@@ -1,0 +1,32 @@
+<h1>Update password for user <%=@user.user_detail.name%></h1>
+<div class="row">
+  <div class="span6 offset3">
+    <%= simple_form_for @user do |f| %>
+      <% if @user.user_detail.name.nil? or @user.user_detail.name.blank? %>
+        <p>It's strange, but we don't remember your name...</p>
+        <%= f.simple_fields_for :user_detail do |b| %>
+          <div class="form-group">
+            <%= b.input :name %>
+          </div>
+        <% end %>
+      <% end %>
+
+      <div class="form-group">
+        <%= f.input :password, as: :pwdcalc_simple %>
+      </div>
+
+      <div class="form-group">
+        <%= f.input :password_confirmation %>
+      </div>
+
+      <%= f.submit 'Update password', class: 'btn btn-large btn-primary' %>
+    <% end %>
+  </div>
+
+  <%# pwdcalc_hints %>
+</div>
+<div class="row">
+  <div class="span6 offset3">
+    Unhappy? Destroy my account.
+  </div>
+</div>

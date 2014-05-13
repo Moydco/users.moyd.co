@@ -12,8 +12,11 @@
 //
 //= require jquery
 //= require jquery_ujs
+//= require twitter/bootstrap
 //= require turbolinks
 //= require_tree .
-//= require bootstrap
 //= require jquery.YAPSM.min
 //= require jquery.pwdcalc
+//= require highcharts/highcharts
+//= require highcharts/highcharts-more
+//= require highcharts/highstock

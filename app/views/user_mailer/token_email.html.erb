@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+</head>
+<body>
+<h1>Hello <%= @user.user_detail.name %>,</h1>
+<p>
+  I'm Norby, the little robot of <%= @application %>.
+</p>
+<p>
+  Thank you for subscription: one small step is necessary to confirm your email.
+  Please click on this link or copy it on your browser:
+</p>
+<p>
+  <%= link_to @token_url, @token_url %>
+</p>
+<p>Thanks for joining <%= @application_name %> and have a great day!</p>
+<p>
+  Norby, the Robot
+</p>
+<p>
+  P.S. Remember, I'm just a bit of software. So, if you have any questions
+  please first read FAQ at our web site <%= link_to @url, @url %> first
+</p>
+</body>
+</html>

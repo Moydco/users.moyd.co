@@ -45,6 +45,7 @@ gem 'capistrano-rails', group: :development
 gem 'capistrano-rvm', group: :development
 gem 'capistrano-ext', group: :development
 gem 'capistrano-puma', group: :development
+gem 'letter_opener', group: :development
 gem 'newrelic_rpm'
 
 # Use Capistrano for deployment
@@ -58,6 +59,7 @@ gem 'rails_config'
 
 # Form
 gem 'simple_form'
+gem 'country_select'
 gem 'pwdcalc'
 
 # Autenticazione
@@ -70,8 +72,17 @@ gem 'mongoid', github: 'mongoid/mongoid'
 gem 'redis'
 gem 'redis-namespace'
 gem 'bloombroom'
+gem 'kaminari'
+
+# Upload invoices
+gem 'carrierwave-mongoid', :require => 'carrierwave/mongoid'
+gem 'mongoid-grid_fs', github: 'ahoward/mongoid-grid_fs'
 
 # Fatturazione
 gem 'stripe', :git => 'https://github.com/stripe/stripe-ruby'
 gem 'stripe_event'
 gem 'httparty'
+
+# Fogli stile
+gem 'twitter-bootstrap-rails'
+gem 'lazy_high_charts'

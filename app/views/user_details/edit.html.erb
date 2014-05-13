@@ -1,0 +1,53 @@
+<h1>User details</h1>
+<% unless @user.data_complete? %>
+  <h3>We aren't able to activate services, because we don't know you. Please update your data to start using our services.</h3>
+<% end %>
+<div class="row">
+  <div class="span6 offset3">
+    <%= simple_form_for @user, url: user_user_details_path, method: :put do |f| %>
+      <% if @user.errors.any? %>
+        <div class="error_messages">
+          <h2><%= pluralize(@user.errors.count, "error") %> prohibited this subscription from being saved:</h2>
+          <ul>
+            <% @user.errors.full_messages.each do |msg| %>
+              <li><%= msg %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+      <%= f.simple_fields_for :user_detail do |b| %>
+        <div class="field">
+         <%= b.input :name %>
+        </div>
+        <div class="field">
+         <%= b.input :address1 %>
+        </div>
+        <div class="field">
+         <%= b.input :address2 %>
+        </div>
+        <div class="field">
+         <%= b.input :zip %>
+        </div>
+        <div class="field">
+         <%= b.input :city %>
+        </div>
+        <div class="field">
+         <%= b.input :state %>
+        </div>
+        <div class="field">
+         <%= b.input :country %>
+        </div>
+        <div class="field">
+         <%= b.input :phone %>
+        </div>
+        <div class="field">
+         <%= b.input :vat_id %>
+        </div>
+        <div class="field">
+          <%= b.input :advise_me_at, as: :float, input_html: { value: (@user.user_detail.minimum.to_f/100).to_s} %>
+        </div>
+        <div class="actions"><%= f.submit "Save data", class: 'btn btn-large btn-primary' %></div>
+      <% end %>
+    <% end %>
+  </div>
+</div>

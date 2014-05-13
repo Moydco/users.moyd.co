@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+</head>
+<body>
+<h1>Hello <%= @user.user_detail.name %>,</h1>
+<p>
+  I’m Norby, the robot of <%= @application %>.
+</p>
+<p>
+  Excuse me if I borrow you, but your credit is below the minimum you set.
+  Please, go to <%= link_to @recharge_url, @recharge_url %> to top up your account.
+</p>
+<p>
+  Thanks again,
+</p>
+<p>
+  Norby, the Robot
+</p>
+<p>
+  P.S. Remember, I'm just a bit of software. So, if you have any questions
+  please first read FAQ at our web site <%= link_to @url, @url %> first
+</p>
+</body>
+</html>

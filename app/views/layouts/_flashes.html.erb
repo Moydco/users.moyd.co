@@ -4,6 +4,12 @@
   </div>
 <% end %>
 
+<% unless flash[:success].blank? %>
+  <div class="alert alert-success">
+    <%= content_tag :div, flash[:success] %>
+  </div>
+<% end %>
+
 <% unless flash[:error].blank? %>
   <div class="alert alert-danger">
     <%= content_tag :div, flash[:error] %>

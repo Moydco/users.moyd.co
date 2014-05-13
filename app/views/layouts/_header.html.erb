@@ -1,0 +1,31 @@
+<% user = User.find(current_user["_id"]["$oid"]) if signed_in? %>
+
+<header class="navbar navbar-fixed-top navbar-inverse">
+  <div class="navbar-inner">
+    <div class="container">
+      <% if Settings.multi_application == 'false' %>
+        <%= link_to Settings.single_application_mode_name,  Settings.single_application_mode_url, id: "logo" %>
+      <% else %>
+        <% app = Application.find(application_id) %>
+        <%= link_to app.name, app.url, id: "logo" %>
+      <% end %>
+      <nav>
+        <ul class="nav pull-right">
+          <% if signed_in? %>
+            <% unless user.confirmed? %>
+              <li><%= link_to "Confirm my email",  validate_token_user_path(user) %></li>
+            <% end %>
+            <li><%= link_to "Edit User Details",  edit_user_user_details_path(user) %></li>
+            <% if User.find(current_user["_id"]["$oid"]).data_complete? %>
+              <li><%= link_to "Change Password",    edit_user_path(user) %></li>
+            <% end %>
+            <li><%= link_to "Logout",             signout_path, :method => :delete %></li>
+          <% else %>
+            <li><%= link_to "Login",        signin_path %></li>
+            <li><%= link_to "Register",     signup_path %></li>
+          <% end %>
+        </ul>
+      </nav>
+    </div>
+  </div>
+</header>

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+</head>
+<body>
+<h1>Hello <%= @user.user_detail.name %>,</h1>
+<p>
+  I'm Norby, the little robot of <%= @application %>: you meet me some time ago,
+  when you confirmed your email.
+</p>
+<p>
+  Now I'm sure about your mail, but I don't know too much about you: I'll be very happy
+  if you would update also your details.
+</p>
+<p>
+  In fact, if some data is missing, I can't activate your service... and I really want
+  make that!
+</p>
+<p>
+  So, if you didn't do that in the meantime, please go to <%= link_to @detail_url, @detail_url %> to complete the form.
+</p>
+<p>
+  Thanks again,
+</p>
+<p>
+  Norby, the Robot
+</p>
+<p>
+  P.S. Remember, I'm just a bit of software. So, if you have any questions
+  please first read FAQ at our web site <%= link_to @url,  @url %> first
+</p>
+</body>
+</html>

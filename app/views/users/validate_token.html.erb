@@ -1,0 +1,14 @@
+<h1>Validate token</h1>
+<div class="row">
+  <div class="span6 offset3">
+    <%= simple_form_for @user, url: validate_token_do_user_path, method: :put do |f| %>
+
+      <div class="form-group">
+        <%= f.input :tk, label: 'Confirmation token', :input_html => { :value => params[:tk] } %>
+      </div>
+
+      <%= f.submit 'Confirm my email', class: 'btn btn-large btn-primary' %>
+    <% end %>
+    <p>Have you lost confirmation email? Check in your spam folder, or <%= link_to 'send another time', resend_confirm_email_user_path(@user) %></p>
+  </div>
+</div>
