@@ -59,4 +59,19 @@ class UserMailer < ActionMailer::Base
 
     mail(to: @user.email, subject: 'Your balance is below minimum')
   end
+
+  def password_lost(user)
+    @user = user
+    @password_lost_url = get_token_password_lost_sessions_url(password_lost_token: user.password_lost_token)
+
+    if Settings.multi_application == 'false'
+      @application = Settings.single_application_mode_name
+      @url=Settings.single_application_mode_url
+    else
+      @application = Application.find(application_id).name
+      @url = Application.find(application_id).url
+    end
+
+    mail(to: @user.email, subject: 'Do you lost your password?')
+  end
 end

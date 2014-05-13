@@ -25,15 +25,17 @@ class User
   before_create :create_confirm_token
   before_save { self.email = email.downcase }
 
-  field :email,           type: String
-  field :password_digest, type: String
-  field :last_login_date, type: DateTime
-  field :last_login_ip,   type: String
-  field :admin,           type: Boolean, default: false
-  field :balance,         type: Integer, default: 0
-  field :stripe_id,       type: String,  default: nil
-  field :confirmed,       type: Boolean, default: false
-  field :confirm_token,   type: String
+  field :email,                 type: String
+  field :password_digest,       type: String
+  field :last_login_date,       type: DateTime
+  field :last_login_ip,         type: String
+  field :admin,                 type: Boolean, default: false
+  field :balance,               type: Integer, default: 0
+  field :stripe_id,             type: String,  default: nil
+  field :confirmed,             type: Boolean, default: false
+  field :confirm_token,         type: String
+  field :password_lost_token,   type: String
+  field :password_lost_expire,  type: DateTime
 
   attr_accessor :stripe_token, :tk
 
@@ -94,6 +96,13 @@ class User
   # check if the user has confirmed his email
   def confirmed?
     self.confirmed
+  end
+
+  def create_password_lost_token
+    o = [('a'..'z'), ('A'..'Z'), ('0'..'9')].map { |i| i.to_a }.flatten
+    self.password_lost_token = (0...64).map{ o[rand(o.length)] }.join
+    self.password_lost_expire = DateTime.now + 2.hours
+    self.save
   end
 
   private

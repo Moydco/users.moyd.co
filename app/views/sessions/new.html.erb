@@ -17,5 +17,6 @@
       <%= f.submit 'Log in', class: 'btn btn-large btn-primary' %>
     <% end %>
     <p>New user? <%= link_to "Sign up now!", new_user_path %></p>
+    <p>I don't remember my email: <%= link_to 'please, help me', password_lost_sessions_url %>!</p>
   </div>
 </div>

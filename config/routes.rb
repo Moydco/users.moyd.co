@@ -19,7 +19,15 @@ UsersMoydCo::Application.routes.draw do
     end
   end
 
-  resources :sessions, only: [:new, :create, :destroy]
+  resources :sessions, only: [:new, :create, :destroy] do
+    collection do
+      post :sign_with_grant
+      get :password_lost
+      post :password_lost_do
+      get :get_token_password_lost
+      post :check_token_password_lost
+    end
+  end
 
   root 'checks#index'
 
