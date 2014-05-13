@@ -5,7 +5,11 @@ UsersMoydCo::Application.routes.draw do
   resources :users do
     resource :user_details, only: [:edit, :update]
     resources :topups,      only: [:show, :create, :edit, :update]
-    resources :vouchers,    only: [:create]
+    resources :vouchers,    only: [:create, :destroy] do
+      collection do
+        post :new_voucher
+      end
+    end
     resources :consumes,    only: [:create]
 
     member do

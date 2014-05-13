@@ -10,7 +10,7 @@ class SessionsController < ApplicationController
   # sign in the user
   def create
     # find the user in persistend DB
-    user = User.where(email: params[:session][:email]).first
+    user = User.where(email: params[:session][:email].downcase).first
     # check if the password is correct
     if !user.nil? && user.authenticate(params[:session][:password])
       # check the authority to log in tho this application

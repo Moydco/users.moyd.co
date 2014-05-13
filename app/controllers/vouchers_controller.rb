@@ -28,4 +28,34 @@ class VouchersController < ApplicationController
 
     redirect_to root_path
   end
+
+  def new_voucher
+    if signed_in?
+      user = User.find(current_user["_id"]["$oid"])
+      if user.is_admin?
+        @voucher = Voucher.create(voucher_params)
+        flash[:success] = "Your voucher of #{(@voucher.amount.to_f/100).to_s} UKP was successfully created. The voucher code is #{@voucher.id.to_s}"
+      end
+    end
+    redirect_to root_path
+  end
+
+  def destroy
+    if signed_in?
+      user = User.find(current_user["_id"]["$oid"])
+      if user.is_admin?
+        if Voucher.find(params[:id]).destroy
+          flash[:success] = "Voucher deleted"
+        else
+          flash[:success] = "Error deleting voucher"
+        end
+      end
+    end
+    redirect_to root_path
+  end
+
+  # Strong params: permit only email, password and password confirmation
+  def voucher_params
+    params.require(:voucher).permit(:expire, :amount )
+  end
 end

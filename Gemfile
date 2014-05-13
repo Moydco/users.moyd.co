@@ -61,6 +61,7 @@ gem 'rails_config'
 gem 'simple_form'
 gem 'country_select'
 gem 'pwdcalc'
+gem 'mongoid-sadstory'
 
 # Autenticazione
 gem 'bcrypt-ruby'

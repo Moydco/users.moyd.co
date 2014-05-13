@@ -1,25 +1,66 @@
 <% if signed_in? %>
   <% if @user.is_admin? %>
     <%= high_chart('user_vs_topup_chart', @chart) %>
-    <h3>TopUp without a linked invoice</h3>
-    <ul style="text-align: left">
+    <h3>Top-Up without a linked invoice</h3>
+    <table class="table table-striped">
+      <thead>
+      <tr>
+        <th>Date</th>
+        <th>User to be billed</th>
+        <th>Amount</th>
+        <th></th>
+      </tr>
+      </thead>
+      <tbody>
       <% @top_up_to_bill.each do |a| %>
-        <li>
-          <%=a.created_at.strftime("%d/%m/%Y")%>:
-          <%= a.user.user_detail.name %> -
-          <%= a.user.user_detail.address1 %> -
-          <%= a.user.user_detail.address2 %> -
-          <%= a.user.user_detail.zip %> -
-          <%= a.user.user_detail.city %> -
-          <%= a.user.user_detail.state %> -
-          <%= a.user.user_detail.country %> -
-          <%= a.user.user_detail.vat_id %> -
-          <a href="<%= link_to_document(a) %>" data-toggle="tooltip" title="<%= tooltip_text(a) %>"><%= a.kind %></a>
-
-          of <%=(a.amount.to_f/100).to_s%>£
-        </li>
+        <tr>
+          <td><%=a.created_at.strftime("%d/%m/%Y")%></td>
+          <td>
+            <%= a.user.user_detail.name %> -
+            <%= a.user.user_detail.address1 %> -
+            <%= a.user.user_detail.address2 %> -
+            <%= a.user.user_detail.zip %> -
+            <%= a.user.user_detail.city %> -
+            <%= a.user.user_detail.state %> -
+            <%= a.user.user_detail.country %> -
+            <%= a.user.user_detail.vat_id %>
+          </td>
+          <td><%=(a.amount.to_f/100).to_s%></td>
+          <td>
+            <a href="<%= link_to_document(a) %>" data-toggle="tooltip" title="<%= tooltip_text(a) %>" class="btn btn-success btn-small">Create Invoice</a>
+          </td>
+        </tr>
       <% end %>
-    </ul>
+      </tbody>
+    </table>
+
+    <h3>Voucher to be activated</h3>
+    <table class="table table-striped">
+      <thead>
+      <tr>
+        <th>Code</th>
+        <th>Expire</th>
+        <th>Amount</th>
+        <th></th>
+      </tr>
+      </thead>
+      <tbody>
+      <% @vouchers.each do |v| %>
+        <tr>
+          <td><%= v.id %></td>
+          <td><%= v.expire.nil? ? 'never' : v.expire.strftime("%d/%m/%Y") %></td>
+          <td><%=(v.amount.to_f/100).to_s%>£</td>
+          <td><%= link_to 'Destroy', user_voucher_path(@user,v), method: :delete, class: 'btn btn-small btn-danger' %></td>
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
+    <h3>Generate a new Voucher</h3>
+    <%= simple_form_for(@voucher, url: new_voucher_user_vouchers_path(@user), method: :post, html: {class: 'form-horizontal'}) do |f| %>
+      <%= f.input :expire, as: :date %>
+      <%= f.input :amount, as: :integer, hint: 'UKp (£ * 100)' %>
+      <%= f.submit 'Create Voucher', class: 'btn btn-success' %>
+    <% end %>
   <% else %>
     <div class="container">
       <div class="row">

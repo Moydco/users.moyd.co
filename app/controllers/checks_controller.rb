@@ -33,6 +33,10 @@ class ChecksController < ApplicationController
           f.chart({:defaultSeriesType=>'column'})
         end
 
+        @voucher = Voucher.new
+
+        @vouchers = Voucher.or({:expire.gt => Date.today}, {expire: nil })
+
         @top_up_to_bill = Activity.where(kind: 'topup').reject {|r| !r.invoice.nil?}
       else
         @name = @user.user_detail.name || @user.email

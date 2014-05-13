@@ -144,6 +144,8 @@ GEM
       treetop (~> 1.4.8)
     mime-types (1.25.1)
     minitest (4.7.5)
+    mongoid-sadstory (0.0.2)
+      mongoid
     moped (2.0.0.beta5)
       bson (~> 2.1)
       connection_pool (~> 1.2)
@@ -266,6 +268,7 @@ DEPENDENCIES
   letter_opener
   mongoid!
   mongoid-grid_fs!
+  mongoid-sadstory
   multi_json
   newrelic_rpm
   puma
