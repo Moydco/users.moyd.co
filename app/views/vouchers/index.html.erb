@@ -1,0 +1,27 @@
+<h3>Voucher to be activated</h3>
+<table class="table table-striped">
+  <thead>
+  <tr>
+    <th>Code</th>
+    <th>Expire</th>
+    <th>Amount</th>
+    <th></th>
+  </tr>
+  </thead>
+  <tbody>
+  <% @vouchers.each do |v| %>
+    <tr>
+      <td><%= v.id %></td>
+      <td><%= v.expire.nil? ? 'never' : v.expire.strftime("%d/%m/%Y") %></td>
+      <td><%=(v.amount.to_f/100).to_s%>£</td>
+      <td><%= link_to 'Destroy', user_voucher_path(current_user,v), method: :delete, class: 'btn btn-small btn-danger', data: { confirm: "Are you sure?" } %></td>
+    </tr>
+  <% end %>
+  </tbody>
+</table>
+<h3>Generate a new Voucher</h3>
+<%= simple_form_for(@voucher, url: new_voucher_user_vouchers_path(current_user), method: :post, html: {class: 'form-horizontal'}) do |f| %>
+  <%= f.input :expire, as: :date %>
+  <%= f.input :amount, as: :integer, hint: 'UKp (£ * 100)' %>
+  <%= f.submit 'Create Voucher', class: 'btn btn-success' %>
+<% end %>

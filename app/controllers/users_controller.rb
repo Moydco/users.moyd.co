@@ -1,12 +1,25 @@
 class UsersController < ApplicationController
-  before_action :signed_in_user, only: [:index, :edit, :update]
+  before_action :signed_in_user, only: [:index, :edit, :update, :show, :destroy]
 
-  # Nothing useful, at the moment
+  # Only for admin view
   def index
-    render status: 404
+    if current_user.is_admin?
+      @users = User.all.page(params[:page])
+    else
+      redirect_to root_path
+    end
   end
 
-  # Sign up new user
+  def show
+    if current_user.is_admin?
+      @user = User.find(params[:id])
+      @activities = @user.activities.desc(:created_at).page(params[:page])
+    else
+      redirect_to root_path
+    end
+  end
+
+  # Form for sign up
   def new
     @user = User.new
     @user.build_user_detail
@@ -17,11 +30,8 @@ class UsersController < ApplicationController
     user = User.new(user_params)
 
     if user.save
-      if Settings.multi_application == 'false'
-        flash[:success] = "Welcome to #{Settings.single_application_mode_name}! Your login details are successfully stored and in a few minutes you'll find a confirmation email in your inbox: please approve your registration as soon as possible. In the meantime, please provide other useful information for billing and contact you."
-      else
-        flash[:success] = "Welcome to #{Application.find(application_id).name}! Your login details are successfully stored and in a few minutes you'll find a confirmation email in your inbox: please approve your registration as soon as possible. In the meantime, please provide other useful information for billing and contact you."
-      end
+      flash[:success] = 'Welcome! Your login details are successfully stored and in a few minutes you\'ll find a confirmation email in your inbox: please approve your registration as soon as possible. In the meantime, please provide other useful information for billing and contact you.'
+
       # if all is correct, send confirmation email...
       UserMailer.token_email(user).deliver
 
@@ -31,12 +41,13 @@ class UsersController < ApplicationController
       # ...and redirect to user page, to request invoice data
       redirect_to edit_user_user_details_path(user)
     else
+      flash.now[:error]='We are unable to create your account'
       render 'new'
 
     end
   end
 
-  # Edit user data form
+  # Edit user password form
   def edit
     @user = User.find(params[:id])
     unless @user.data_complete?
@@ -44,27 +55,35 @@ class UsersController < ApplicationController
     end
   end
 
-  # Update user data
+  # Update user password
   def update
     @user = User.find(params[:id])
     if @user.update_attributes(user_params)
-      flash[:success] = "Your password has successfully updated"
-
-      #sign_in(user)
-
-      # ...and redirect to user page, to request invoice data
-      redirect_to edit_user_user_details_path(@user)
+      flash[:success] = 'Your password has successfully updated'
+      if @user.data_complete?
+        redirect_to root_path
+      else
+        redirect_to edit_user_user_details_path(@user)
+      end
     else
-      flash.now[:error] = "Error updating your password"
+      flash.now[:error] = 'Error updating your password'
       render 'edit'
-
     end
   end
 
   # Destroy a user
   def destroy
+    if current_user.is_admin?
+      @user = User.find(params[:id])
+      @user.destroy
+      flash[:success]="User deleted"
+      redirect_to root_path
+    else
+      redirect_to root_path
+    end
   end
 
+  # Form to validate token sended via E-Mail
   def validate_token
     @user=User.find(params[:id])
     if @user.confirmed?
@@ -76,6 +95,7 @@ class UsersController < ApplicationController
     end
   end
 
+  # Confirm user email
   def validate_token_do
     @user=User.find(params[:id])
     unless @user.confirmed?
@@ -86,6 +106,7 @@ class UsersController < ApplicationController
     end
 
     if @user.confirmed?
+      flash[:success] = 'Your email has successfully confirmed'
       if @user.data_complete?
         redirect_to root_path
       else
@@ -97,6 +118,7 @@ class UsersController < ApplicationController
     end
   end
 
+  # Resend confirmation email
   def resend_confirm_email
     UserMailer.token_email(User.find(params[:id])).deliver
     flash[:success] = 'We have send you another mail with your token'

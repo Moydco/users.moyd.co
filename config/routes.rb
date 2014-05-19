@@ -1,11 +1,24 @@
 UsersMoydCo::Application.routes.draw do
 
+  get  'oauth2/authorize'
+  post 'oauth2/authorize'
+  get  'oauth2/deny_authorize'
+  get  'oauth2/allow_authorize'
+  post 'oauth2/token',  to: 'oauth2#token_request'
+  post 'oauth2/revoke'
+
   resources :checks, only: [:index, :create]
 
   resources :users do
+    resources :oauth2, only: [:index, :destroy]
+    resources :apps do
+      member do
+        put :update_secret
+      end
+    end
     resource :user_details, only: [:edit, :update]
     resources :topups,      only: [:show, :create, :edit, :update]
-    resources :vouchers,    only: [:create, :destroy] do
+    resources :vouchers,    only: [:index, :create, :destroy] do
       collection do
         post :new_voucher
       end

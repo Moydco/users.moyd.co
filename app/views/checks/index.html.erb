@@ -1,77 +1,59 @@
 <% if signed_in? %>
-  <% if @user.is_admin? %>
-    <%= high_chart('user_vs_topup_chart', @chart) %>
-    <h3>Top-Up without a linked invoice</h3>
-    <table class="table table-striped">
-      <thead>
-      <tr>
-        <th>Date</th>
-        <th>User to be billed</th>
-        <th>Amount</th>
-        <th></th>
-      </tr>
-      </thead>
-      <tbody>
-      <% @top_up_to_bill.each do |a| %>
-        <tr>
-          <td><%=a.created_at.strftime("%d/%m/%Y")%></td>
-          <td>
-            <%= a.user.user_detail.name %> -
-            <%= a.user.user_detail.address1 %> -
-            <%= a.user.user_detail.address2 %> -
-            <%= a.user.user_detail.zip %> -
-            <%= a.user.user_detail.city %> -
-            <%= a.user.user_detail.state %> -
-            <%= a.user.user_detail.country %> -
-            <%= a.user.user_detail.vat_id %>
-          </td>
-          <td><%=(a.amount.to_f/100).to_s%></td>
-          <td>
-            <a href="<%= link_to_document(a) %>" data-toggle="tooltip" title="<%= tooltip_text(a) %>" class="btn btn-success btn-small">Create Invoice</a>
-          </td>
-        </tr>
-      <% end %>
-      </tbody>
-    </table>
+  <% if current_user.is_admin? %>
+    <div class="row">
+      <div class="span12">
 
-    <h3>Voucher to be activated</h3>
-    <table class="table table-striped">
-      <thead>
-      <tr>
-        <th>Code</th>
-        <th>Expire</th>
-        <th>Amount</th>
-        <th></th>
-      </tr>
-      </thead>
-      <tbody>
-      <% @vouchers.each do |v| %>
-        <tr>
-          <td><%= v.id %></td>
-          <td><%= v.expire.nil? ? 'never' : v.expire.strftime("%d/%m/%Y") %></td>
-          <td><%=(v.amount.to_f/100).to_s%>£</td>
-          <td><%= link_to 'Destroy', user_voucher_path(@user,v), method: :delete, class: 'btn btn-small btn-danger' %></td>
-        </tr>
-      <% end %>
-      </tbody>
-    </table>
-    <h3>Generate a new Voucher</h3>
-    <%= simple_form_for(@voucher, url: new_voucher_user_vouchers_path(@user), method: :post, html: {class: 'form-horizontal'}) do |f| %>
-      <%= f.input :expire, as: :date %>
-      <%= f.input :amount, as: :integer, hint: 'UKp (£ * 100)' %>
-      <%= f.submit 'Create Voucher', class: 'btn btn-success' %>
-    <% end %>
+        <%= high_chart('user_vs_topup_chart', @chart) %>
+      </div>
+    </div>
+    <div class="row">
+      <div class="span12">
+        <h3>Top-Up without a linked invoice</h3>
+        <table class="table table-striped">
+          <thead>
+          <tr>
+            <th>Date</th>
+            <th>User to be billed</th>
+            <th>Amount</th>
+            <th></th>
+          </tr>
+          </thead>
+          <tbody>
+          <% @top_up_to_bill.each do |a| %>
+            <tr>
+              <td><%=a.created_at.strftime("%d/%m/%Y")%></td>
+              <td>
+                <%= a.user.user_detail.name %> -
+                <%= a.user.user_detail.address1 %> -
+                <%= a.user.user_detail.address2 %> -
+                <%= a.user.user_detail.zip %> -
+                <%= a.user.user_detail.city %> -
+                <%= a.user.user_detail.state %> -
+                <%= a.user.user_detail.country %> -
+                <%= a.user.user_detail.vat_id %>
+              </td>
+              <td><%=(a.amount.to_f/100).to_s%></td>
+              <td>
+                <a href="<%= link_to_document(a) %>" data-toggle="tooltip" title="<%= tooltip_text(a) %>" class="btn btn-success btn-small">Create Invoice</a>
+              </td>
+            </tr>
+          <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
   <% else %>
     <div class="container">
       <div class="row">
         <h1>Hello, <%= @name %></h1>
-        <h2>Your current balance is <%= @user.balance.to_f/100 %> £</h2>
+        <h2>Your current balance is <%= current_user.balance.to_f/100 %> £</h2>
         <div class="span8">
           <div class="row">
             <div class="span6 shadow">
               <h3>Have you a voucher?</h3>
               <h5>Insert your code here!</h5>
-              <%= simple_form_for @voucher, url: user_vouchers_path(@user) do |f| %>
+              <%= simple_form_for @voucher, url: user_vouchers_path(current_user) do |f| %>
                 <%=f.input :voucher_code%><br/>
                 <%=submit_tag('Activate it!', class: 'btn btn-large btn-primary')%>
               <% end %>
@@ -82,7 +64,7 @@
             <div class="span2 shadow">
               <h3>Top-up 10 £</h3>
               <h5>(vat incl.)</h5>
-              <%= form_tag user_topups_path(@user) do %>
+              <%= form_tag user_topups_path(current_user) do %>
                 <script
                 src="https://checkout.stripe.com/checkout.js" class="stripe-button"
                 data-key="<%= STRIPE_PUBLIC_KEY %>"
@@ -90,7 +72,7 @@
                 data-name="<%= @application_name %>"
                 data-description="TopUp of 10.00 UKP"
                 data-currenncy="gbp"
-                data-email="<%= @user.email %>"
+                data-email="<%= current_user.email %>"
                 >
                 </script>
                 <%= hidden_field_tag :amount, 1000 %>
@@ -100,7 +82,7 @@
             <div class="span2 shadow">
               <h3>Top-up 25 £</h3>
               <h5>(vat incl.)</h5>
-              <%= form_tag user_topups_path(@user) do %>
+              <%= form_tag user_topups_path(current_user) do %>
                 <script
                 src="https://checkout.stripe.com/checkout.js" class="stripe-button"
                 data-key="<%= STRIPE_PUBLIC_KEY %>"
@@ -108,7 +90,7 @@
                 data-name="<%= @application_name %>"
                 data-description="TopUp of 25.00 UKP"
                 data-currenncy="gbp"
-                data-email="<%= @user.email %>"
+                data-email="<%= current_user.email %>"
                 >
                 </script>
                 <%= hidden_field_tag :amount, 2500 %>
@@ -118,7 +100,7 @@
             <div class="span2 shadow">
               <h3>Top-up 50 £</h3>
               <h5>(vat incl.)</h5>
-              <%= form_tag user_topups_path(@user) do %>
+              <%= form_tag user_topups_path(current_user) do %>
                 <script
                 src="https://checkout.stripe.com/checkout.js" class="stripe-button"
                 data-key="<%= STRIPE_PUBLIC_KEY %>"
@@ -126,7 +108,7 @@
                 data-name="<%= @application_name %>"
                 data-description="TopUp of 50.00 UKP"
                 data-currenncy="gbp"
-                data-email="<%= @user.email %>"
+                data-email="<%= current_user.email %>"
                 >
                 </script>
                 <%= hidden_field_tag :amount, 5000 %>
@@ -138,7 +120,7 @@
             <div class="span2 shadow">
               <h3>Top-up 100 £</h3>
               <h5>(vat incl.)</h5>
-              <%= form_tag user_topups_path(@user) do %>
+              <%= form_tag user_topups_path(current_user) do %>
                 <script
                 src="https://checkout.stripe.com/checkout.js" class="stripe-button"
                 data-key="<%= STRIPE_PUBLIC_KEY %>"
@@ -146,7 +128,7 @@
                 data-name="<%= @application_name %>"
                 data-description="TopUp of 100.00 UKP"
                 data-currenncy="gbp"
-                data-email="<%= @user.email %>"
+                data-email="<%= current_user.email %>"
                 >
                 </script>
                 <%= hidden_field_tag :amount, 10000 %>
@@ -156,7 +138,7 @@
             <div class="span2 shadow">
               <h3>Top-up 200 £</h3>
               <h5>(vat incl.)</h5>
-              <%= form_tag user_topups_path(@user) do %>
+              <%= form_tag user_topups_path(current_user) do %>
                 <script
                 src="https://checkout.stripe.com/checkout.js" class="stripe-button"
                 data-key="<%= STRIPE_PUBLIC_KEY %>"
@@ -164,7 +146,7 @@
                 data-name="<%= @application_name %>"
                 data-description="TopUp of 200.00 UKP"
                 data-currenncy="gbp"
-                data-email="<%= @user.email %>"
+                data-email="<%= current_user.email %>"
                 >
                 </script>
                 <%= hidden_field_tag :amount, 20000 %>
@@ -174,7 +156,7 @@
             <div class="span2 shadow">
               <h3>Top-up 500 £</h3>
               <h5>(vat incl.)</h5>
-              <%= form_tag user_topups_path(@user) do %>
+              <%= form_tag user_topups_path(current_user) do %>
                 <script
                 src="https://checkout.stripe.com/checkout.js" class="stripe-button"
                 data-key="<%= STRIPE_PUBLIC_KEY %>"
@@ -182,7 +164,7 @@
                 data-name="<%= @application_name %>"
                 data-description="TopUp of 500.00 UKP"
                 data-currenncy="gbp"
-                data-email="<%= @user.email %>"
+                data-email="<%= current_user.email %>"
                 >
                 </script>
                 <%= hidden_field_tag :amount, 50000 %>

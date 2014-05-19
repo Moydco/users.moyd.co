@@ -2,12 +2,12 @@ class ChecksController < ApplicationController
   # nothing than a default page
   def index
     if signed_in?
-      @user ||= User.find(current_user["_id"]["$oid"])
-      if @user.is_admin?
-        if Settings.multi_application == 'false'
+      if current_user.is_admin?
+
+        begin
+          @application_name = App.find(application_id).name
+        rescue
           @application_name =  Settings.single_application_mode_name
-        else
-          @application_name = Application.find(application_id).name
         end
 
         dates = (1.month.ago.to_date..Date.today).map{ |date| date.strftime("%b %d") }
@@ -33,27 +33,24 @@ class ChecksController < ApplicationController
           f.chart({:defaultSeriesType=>'column'})
         end
 
-        @voucher = Voucher.new
-
-        @vouchers = Voucher.or({:expire.gt => Date.today}, {expire: nil })
-
         @top_up_to_bill = Activity.where(kind: 'topup').reject {|r| !r.invoice.nil?}
       else
-        @name = @user.user_detail.name || @user.email
-        @activities = @user.activities.desc(:created_at).page(params[:page])
+        @name = current_user.user_detail.name || current_user.email
+        @activities = current_user.activities.desc(:created_at).page(params[:page])
         @voucher = Voucher.new
         @amount = params[:amount]
       end
-
+    else
+      redirect_to signin_path
     end
   end
 
   # check if the user is authenticated, by token
   def create
     if signed_in?
-      render json: @current_user.to_json, status: 200
+      render text: 'OK', status: 200
     else
-      render text: 'User not authenticated', status: 404
+      render text: 'Error', status: 401
     end
   end
 end

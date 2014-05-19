@@ -6,12 +6,21 @@
 # - last_login_ip: the IP address of user's client used in last login
 # Last two field is useful to have a unique token every time
 # - password, password_confirmation: volatile attributes for singup and edit_user views
-# - old_password: volatile attribute to edit_user view
+# - admin: boolean, if the user is a local admin
+# - balance: user balance in pence (UKP x 100)
+# - stripe_id: user id on Stripe
+# - paypal_id: user id on Paypal
+# - confirmed: boolean, if the user email was confirmed
+# - confirm_token: email confirmation token
+# - password_lost_token: the token to reset password
+# - password_lost_token_expire: the token to reset password expiration
+# - refresh_token: the token to request a new volatile token
+# - refresh_token_expire: the expiration date of refresh token
 #
 # Relations:
 # embeds_one UserDetail: all other information useful for invoicing services.
-# embeds_many UserSocial: the link to social networks to provide a faster authentication
-# has_many Application: the Application used by the user
+# embeds_many UserSocial: the link to social networks to provide a faster authentication (TODO)
+# has_many App: the Application authorized by the user
 #
 # This class contains basic user data for authentication
 
@@ -23,7 +32,8 @@ class User
   include ActiveModel::SecurePassword
 
   before_create :create_confirm_token
-  before_save { self.email = email.downcase }
+  after_create  :add_local_app
+  before_save   { self.email = email.downcase }
 
   field :email,                 type: String
   field :password_digest,       type: String
@@ -32,14 +42,17 @@ class User
   field :admin,                 type: Boolean, default: false
   field :balance,               type: Integer, default: 0
   field :stripe_id,             type: String,  default: nil
+  field :paypal_id,             type: String,  default: nil
   field :confirmed,             type: Boolean, default: false
   field :confirm_token,         type: String
   field :password_lost_token,   type: String
   field :password_lost_expire,  type: DateTime
+  field :refresh_token,         type: String
+  field :refresh_token_expire,  type: DateTime
 
   attr_accessor :stripe_token, :tk
 
-  has_many :applications
+  has_many :renew_tokens
   has_many :activities
 
   embeds_one :user_detail
@@ -56,19 +69,29 @@ class User
   # All methods for password verification are in this helper
   has_secure_password
 
+  # Emulate has_many :trough
+  def apps
+    App.in(id: renew_tokens.map(&:app_id))
+  end
+
   # update :last_login_date and :last_login_ip
   def touch_login(ip)
     self.update_attribute(:last_login_date, DateTime.now)
     self.update_attribute(:last_login_ip, ip)
-
+    self.save
     self
   end
 
-  # create the remember token in JWT format and store it in a separate Redis Database
+  # Generate the access_token in JWT format
+  def generate_token(secret)
+    JWT.encode(self.to_json,secret)
+  end
+
+  # store the access_token in a separate Redis Database
   def store_user_session_in_redis(secret)
-    remember_token = JWT.encode(self.to_json,secret)
+    remember_token = generate_token(secret)
     $redis_user.set(remember_token,self.id.to_s)
-    $redis_user.expire(remember_token, Settings.session_expire)
+    $redis_user.expire(remember_token, Settings.token_expire)
 
     remember_token
   end
@@ -105,10 +128,28 @@ class User
     self.save
   end
 
+  def set_refresh_tokens
+    o = [('a'..'z'), ('A'..'Z'), ('0'..'9')].map { |i| i.to_a }.flatten
+    self.refresh_token = (0...64).map{ o[rand(o.length)] }.join
+    self.refresh_token_expire = DateTime.now + (Settings.renew_token_expire).to_i.days
+    self.save
+    self
+  end
+
+  def delete_refresh_token
+    self.refresh_token = nil
+    self.refresh_token_expire = DateTime.now
+    self.save
+  end
+
   private
 
   def create_confirm_token
     o = [('a'..'z'), ('A'..'Z'), ('0'..'9')].map { |i| i.to_a }.flatten
     self.confirm_token = (0...64).map{ o[rand(o.length)] }.join
+  end
+
+  def add_local_app
+    RenewToken.create(user: self, app: App.where(name: Settings.local_app_name).first)
   end
 end

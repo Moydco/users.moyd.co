@@ -1,0 +1,36 @@
+<h3>Apps activated</h3>
+<table class="table table-striped">
+  <thead>
+  <tr>
+    <th>Name</th>
+    <th>client_id</th>
+    <th>Uri</th>
+    <th></th>
+  </tr>
+  </thead>
+  <tbody>
+  <% @apps.each do |a| %>
+    <tr>
+      <td><%= a.name %></td>
+      <td><%= a.id %></td>
+      <td><%= a.url + a.path%></td>
+      <td><%= link_to 'Regenerate secret', update_secret_user_app_path(current_user,a), method: :put, class: 'btn btn-small btn-warning' %></td>
+      <td>
+        <% unless a.name == Settings.local_app_name %>
+          <%= link_to 'Destroy', user_app_path(current_user,a), method: :delete, class: 'btn btn-small btn-danger', data: { confirm: "Are you sure?" } %>
+        <% end %>
+      </td>
+    </tr>
+  <% end %>
+  </tbody>
+</table>
+<h3>Generate App credentials</h3>
+<%= simple_form_for(@app, url: user_apps_path(current_user), method: :post, html: {class: 'form-horizontal'}) do |f| %>
+  <%= f.input :name %>
+  <%= f.input :url %>
+  <%= f.input :path %>
+  <%= f.input :enable_code, as: :boolean %>
+  <%= f.input :enable_implicit, as: :boolean %>
+  <%= f.input :enable_password, as: :boolean %>
+  <%= f.submit 'Create App', class: 'btn btn-success' %>
+<% end %>

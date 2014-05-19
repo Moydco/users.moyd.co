@@ -1,11 +1,11 @@
 module ChecksHelper
+  # For topup, link the show invoice or upload invoice
   def link_to_document(activity)
     if activity.kind == 'topup'
-      @user ||= User.find(current_user["_id"]["$oid"])
-      if @user.is_admin?
+      if current_user.is_admin?
         edit_user_topup_path(activity.user,activity.id)
       else
-        user_topup_path(@user,activity.id)
+        user_topup_path(current_user,activity.id)
       end
     elsif activity.kind == 'voucher'
       '#'
@@ -14,10 +14,10 @@ module ChecksHelper
     end
   end
 
+  # Tooltip text for user activity list
   def tooltip_text(activity)
     if activity.kind == 'topup'
-      @user ||= User.find(current_user["_id"]["$oid"])
-      if @user.is_admin?
+      if current_user.is_admin?
         'Click me to upload invoice'
       else
         'Click me to download invoice'

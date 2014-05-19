@@ -1,0 +1,26 @@
+<h3>Linked Application</h3>
+<table class="table table-striped">
+  <thead>
+  <tr>
+    <th>Application Name</th>
+    <th>Application Url</th>
+    <th>Expire</th>
+    <th></th>
+  </tr>
+  </thead>
+  <tbody>
+  <% @renew_tokens.each do |r| %>
+    <% r.app.name == Settings.local_app_name ? name = 'Account Admin' : name = r.app.name %>
+    <tr>
+      <td><%= name %></td>
+      <td><%= r.app.url %></td>
+      <td><%= r.expirable_created_at.nil? ? 'never' : (r.expirable_created_at + Settings.renew_token_expire.to_i.days) %></td>
+      <% if r.app.name == Settings.local_app_name%>
+        <td></td>
+      <% else %>
+        <td><%= link_to 'Destroy', user_oauth2_path(current_user,r), method: :delete, class: 'btn btn-small btn-danger', data: { confirm: "Are you sure?" } %></td>
+      <% end %>
+    </tr>
+  <% end %>
+  </tbody>
+</table>

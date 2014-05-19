@@ -1,0 +1,5 @@
+<h1>Hello <%=current_user.user_detail.name%></h1>
+<h3>The app <%=@app.name%> request the authorization to access your basic information.</h3>
+<h1>Allow <b><%=@app.name%></b> access?</h1>
+<%=link_to 'Deny', oauth2_deny_authorize_path, class: 'btn btn-large btn-error' %>
+<%=link_to 'Allow', oauth2_allow_authorize_path, class: 'btn btn-large btn-success' %>

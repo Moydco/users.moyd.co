@@ -1,0 +1,63 @@
+<div class="container">
+  <div class="row">
+    <h1>This is the status of <%= @user.user_detail.name %></h1>
+    <h2>His current balance is <%= @user.balance.to_f/100 %> £</h2>
+    <div class="span8">
+      <table class="table table-striped">
+        <tr>
+          <td>Name</td>
+          <td><%=@user.user_detail.name%></td>
+        </tr>
+        <tr>
+          <td>Address</td>
+          <td>
+            <%=@user.user_detail.address1%><br/>
+            <%=@user.user_detail.address2%>
+          </td>
+        </tr>
+        <tr>
+          <td>Zip</td>
+          <td><%=@user.user_detail.zip%></td>
+        </tr>
+        <tr>
+          <td>City</td>
+          <td><%=@user.user_detail.city%></td>
+        </tr>
+        <tr>
+          <td>State</td>
+          <td><%=@user.user_detail.state%></td>
+        </tr>
+        <tr>
+          <td>Country</td>
+          <td><%=@user.user_detail.country%></td>
+        </tr>
+        <tr>
+          <td>Vat ID</td>
+          <td><%=@user.user_detail.vat_id%></td>
+        </tr>
+        <tr>
+          <td>Phone</td>
+          <td><%=@user.user_detail.phone%></td>
+        </tr>
+        <tr>
+          <td>Email</td>
+          <td><%=@user.email%></td>
+        </tr>
+      </table>
+    </div>
+    <div class="span3">
+      <h3>Last activities</h3>
+      <ul style="text-align: left">
+        <% @activities.each do |a| %>
+          <li>
+            <%=a.created_at.strftime("%d/%m/%Y")%>:
+            <a href="<%= link_to_document(a) %>" data-toggle="tooltip" title="<%= tooltip_text(a) %>"><%= a.kind %></a>
+
+            of <%=(a.amount.to_f/100).to_s%>£
+          </li>
+        <% end %>
+      </ul>
+      <%= paginate @activities %>
+    </div>
+  </div>
+</div>

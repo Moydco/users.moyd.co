@@ -1,21 +1,23 @@
 class TopupsController < ApplicationController
   before_action :signed_in_user
 
+  # Show an invoice
   def show
     @user = User.find(params[:user_id])
     @activity = @user.activities.find(params[:id])
-    if !@activity.invoice.nil?
-      content = @activity.invoice.doc.read
-      if stale?(etag: content, last_modified: @activity.invoice.updated_at.utc, public: true)
-        send_data content, type: @activity.invoice.doc.file.content_type, disposition: "inline"
-        expires_in 0, public: true
-      end
-    else
+    if @activity.invoice.nil?
       flash[:error] = 'Invoice not generated yet'
       redirect_to root_path
+    else
+      content = @activity.invoice.doc.read
+      if stale?(etag: content, last_modified: @activity.invoice.updated_at.utc, public: true)
+        send_data content, type: @activity.invoice.doc.file.content_type, disposition: 'inline'
+        expires_in 0, public: true
+      end
     end
   end
 
+  # get money from stripe and top up user account
   def create
     @amount = params[:amount]
     @user = User.find(params[:user_id])
@@ -53,7 +55,7 @@ class TopupsController < ApplicationController
         flash[:success] = "Thank you for top up #{(@amount.to_f/100).to_s}$ with us."
         redirect_to root_path
       else
-        flash.now[:error] = "Credit card declined"
+        flash.now[:error] = 'Credit card declined'
         render new
       end
     rescue Stripe::CardError => e
@@ -62,15 +64,21 @@ class TopupsController < ApplicationController
     end
   end
 
+  # Form to upload an invoice
   def edit
-    @user = User.find(params[:user_id])
-    @activity = @user.activities.find(params[:id])
-    @invoice = Invoice.new
+    if current_user.is_admin?
+      @user = User.find(params[:user_id])
+      @activity = @user.activities.find(params[:id])
+      @invoice = Invoice.new
+    else
+      flash[:error] = 'You aren\'t an admin'
+    end
   end
 
+  # Upload an invoice
   def update
-    @user = User.find(params[:user_id])
-    if @user.is_admin?
+    if current_user.is_admin?
+      @user = User.find(params[:user_id])
       @activity = @user.activities.find(params[:id])
       i=Invoice.new
       i.doc.store!(params[:invoice][:doc])

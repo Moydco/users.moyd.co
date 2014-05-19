@@ -16,7 +16,6 @@ class Activity
   def update_balance
     if kind == 'topup'
       self.user.update_attribute(:balance, self.user.balance + self.amount)
-      # TODO Generate and link invoice
     elsif kind == 'voucher'
       self.user.update_attribute(:balance, self.user.balance + self.amount)
     elsif kind == 'consume'
@@ -25,13 +24,5 @@ class Activity
         UserMailer.advise_minimum(self.user).deliver
       end
     end
-  end
-
-  def generate_invoice
-
-  end
-
-  def update_voucher
-
   end
 end

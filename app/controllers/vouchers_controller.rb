@@ -1,12 +1,23 @@
 class VouchersController < ApplicationController
   before_action :signed_in_user
 
+  # Show active vouchers
+  def index
+    if current_user.is_admin?
+      @voucher = Voucher.new
+      @vouchers = Voucher.or({:expire.gt => Date.today}, {expire: nil })
+    else
+      redirect_to root_path
+    end
+  end
+
+  # Credit a voucher
   def create
     if signed_in?
-      @user = User.find(current_user["_id"]["$oid"])
+      @user = current_user
       @voucher = Voucher.find(params[:voucher][:voucher_code])
       if @voucher.nil?
-        flash[:error] = 'Incorreect voucher code'
+        flash[:error] = 'Incorrect voucher code'
       else
         if @voucher.activated?
           flash[:error] = 'Voucher already used'
@@ -29,30 +40,31 @@ class VouchersController < ApplicationController
     redirect_to root_path
   end
 
+  # Generate a new voucher
   def new_voucher
-    if signed_in?
-      user = User.find(current_user["_id"]["$oid"])
-      if user.is_admin?
-        @voucher = Voucher.create(voucher_params)
-        flash[:success] = "Your voucher of #{(@voucher.amount.to_f/100).to_s} UKP was successfully created. The voucher code is #{@voucher.id.to_s}"
-      end
+    if current_user.is_admin?
+      @voucher = Voucher.create(voucher_params)
+      flash[:success] = "Your voucher of #{(@voucher.amount.to_f/100).to_s} UKP was successfully created. The voucher code is #{@voucher.id.to_s}"
     end
-    redirect_to root_path
+    redirect_to user_vouchers_path(current_user)
   end
 
+  # Destroy a voucher
   def destroy
-    if signed_in?
-      user = User.find(current_user["_id"]["$oid"])
-      if user.is_admin?
-        if Voucher.find(params[:id]).destroy
-          flash[:success] = "Voucher deleted"
-        else
-          flash[:success] = "Error deleting voucher"
-        end
+    if current_user.is_admin?
+      if Voucher.find(params[:id]).destroy
+        flash[:success] = "Voucher deleted"
+        redirect_to user_vouchers_path(current_user)
+      else
+        flash[:success] = "Error deleting voucher"
+        redirect_to user_vouchers_path(current_user)
       end
+    else
+      redirect_to root_path
     end
-    redirect_to root_path
   end
+
+  private
 
   # Strong params: permit only email, password and password confirmation
   def voucher_params

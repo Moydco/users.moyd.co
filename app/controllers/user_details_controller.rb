@@ -3,11 +3,12 @@ class UserDetailsController < ApplicationController
 
   # Methods to update user's billing details
 
-  # 
+  # User form data
   def edit
     @user = User.find(params[:user_id])
   end
 
+  # Upadate user data
   def update
     @user = User.find(params[:user_id])
 

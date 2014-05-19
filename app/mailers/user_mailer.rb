@@ -9,8 +9,8 @@ class UserMailer < ActionMailer::Base
       @application = Settings.single_application_mode_name
       @url=Settings.single_application_mode_url
     else
-      @application = Application.find(application_id).name
-      @url = Application.find(application_id).url
+      @application = App.find(application_id).name
+      @url = App.find(application_id).url
     end
 
     mail(to: @user.email, subject: 'Please confirm your email')
@@ -24,8 +24,8 @@ class UserMailer < ActionMailer::Base
       @application = Settings.single_application_mode_name
       @url=Settings.single_application_mode_url
     else
-      @application = Application.find(application_id).name
-      @url = Application.find(application_id).url
+      @application = App.find(application_id).name
+      @url = App.find(application_id).url
     end
 
     mail(to: @user.email, subject: "Welcome to #{@application}")
@@ -38,8 +38,8 @@ class UserMailer < ActionMailer::Base
       @application = Settings.single_application_mode_name
       @url=Settings.single_application_mode_url
     else
-      @application = Application.find(application_id).name
-      @url = Application.find(application_id).url
+      @application = App.find(application_id).name
+      @url = App.find(application_id).url
     end
 
     mail(to: @user.email, subject: 'Thank you to update your data')
@@ -53,8 +53,8 @@ class UserMailer < ActionMailer::Base
       @application = Settings.single_application_mode_name
       @url=Settings.single_application_mode_url
     else
-      @application = Application.find(application_id).name
-      @url = Application.find(application_id).url
+      @application = App.find(application_id).name
+      @url = App.find(application_id).url
     end
 
     mail(to: @user.email, subject: 'Your balance is below minimum')
@@ -68,10 +68,18 @@ class UserMailer < ActionMailer::Base
       @application = Settings.single_application_mode_name
       @url=Settings.single_application_mode_url
     else
-      @application = Application.find(application_id).name
-      @url = Application.find(application_id).url
+      @application = App.find(application_id).name
+      @url = App.find(application_id).url
     end
 
     mail(to: @user.email, subject: 'Do you lost your password?')
+  end
+
+  def send_app_secret(user,app,secret)
+    @user = user
+    @app = app
+    @secret = secret
+
+    mail(to: @user.email, subject: 'Here it is your app auth data')
   end
 end

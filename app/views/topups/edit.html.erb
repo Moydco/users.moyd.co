@@ -1,7 +1,10 @@
 <%= form_for @invoice, url: user_topup_path(@user, @activity), method: :put, html: {multipart: true} do |f| %>
   <p>
+    <%= link_to('Invoice already uploaded', @activity.invoice.doc_url) if !(@activity.invoice.nil? and @activity.invoice.doc_url.nil?) %>
+  </p>
+  <p>
     <label>Invoice</label>
-    <%# image_tag(@invoice.doc_url) if @invoice.doc? %>
+
     <%= f.file_field :doc %>
     <%= f.hidden_field :doc_cache %>
     <%= f.submit('Send file') %>

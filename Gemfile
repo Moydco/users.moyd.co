@@ -87,3 +87,9 @@ gem 'httparty'
 # Fogli stile
 gem 'twitter-bootstrap-rails'
 gem 'lazy_high_charts'
+
+group :test do
+  gem 'rspec-rails'
+  gem 'shoulda-matchers'
+  gem 'factory_girl_rails'
+end

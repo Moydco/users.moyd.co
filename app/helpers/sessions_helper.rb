@@ -4,11 +4,11 @@ module SessionsHelper
 
   # Sign in the user
   def sign_in(user)
-    # update timestamp and IP address
+    # update timestamp, IP address, refresh token data
     user = user.touch_login(request.remote_ip)
     # create the token and in store it on our Redis DB
-    remember_token = user.store_user_session_in_redis(self.application_secret)
-
+    remember_token = user.store_user_session_in_redis(self.application_id)
+    logger.debug "Token saved on redis while sign_in: #{remember_token}"
     # set a cookie on client browser with the user token, so he can browse "logged in" views on this site
     cookies.permanent[:remember_token] = remember_token
     # set a variable "token" for this app
@@ -23,14 +23,23 @@ module SessionsHelper
   end
 
   # set a variable "current_user" with the hash of the user
-  def current_user=(user)
-    @current_user = user
+  def current_user_hash=(user)
+    @current_user_hash = user
   end
 
-  # retrieve current_user variable
-  def current_user
+  # retrieve current_user hash variable
+  def current_user_hash
     remember_token = cookies[:remember_token] || token
-    @current_user ||= user_authenticated?(remember_token)
+    @current_user_hash ||= user_authenticated?(remember_token)
+  end
+
+  # retrieve current_user hash variable
+  def current_user
+    @current_user ||= User.find(current_user_hash["_id"]["$oid"]) unless current_user_hash.nil?
+  end
+
+  def current_user=(user)
+    @current_user = user
   end
 
   # check if user is signed in
@@ -45,28 +54,23 @@ module SessionsHelper
 
   # get the token passed by remote web interface from request in header or in parameters
   def token
-    if @token.nil?
-      if Settings.parameters_by_header.downcase == 'true'
-        @token = request.headers[Settings.token_name]
-      else
-        @token = params[Settings.token_name]
-      end
-    end
-
+    @token = request.headers[:Authorization] || params[:Authorization] if @token.nil?
+    @token = @token.split[1] if @token.start_with?('Bearer ') unless @token.nil?
     @token
   end
 
   # check if user is authenticated using the token provided: if the token is correct, return the user hash
   # else return nil
   def user_authenticated?(remember_token)
-    logger.debug("Application secret: #{self.application_secret}")
+    logger.debug("Application id: #{self.application_id}")
+    logger.debug("Application id from session: #{session[:client_id]}")
     logger.debug("Remember token: #{remember_token}")
     checked_user = nil
     # first check if the token is correct and, if true, set the user hash in local variable "user_from_token"
     begin
-      user_from_token = JSON.parse(JWT.decode(remember_token, self.application_secret))
+      user_from_token = JSON.parse(JWT.decode(remember_token, self.application_id))
     rescue
-      logger.debug("Token not correct")
+      logger.debug('Token not correct')
       cookies.delete(:remember_token)
       user_from_token = nil
     end
@@ -75,7 +79,7 @@ module SessionsHelper
     # then on Redis DB
     unless user_from_token.nil?
       if Settings.use_bloom_filter.downcase == 'true'
-        logger.debug("Using bloom filter")
+        logger.debug('Using bloom filter')
         # Code for the bloom filter
         if $bf_user.include?(remember_token)
           logger.debug('Bloom filter true')
@@ -83,7 +87,7 @@ module SessionsHelper
           checked_user = user_present_on_redis?(remember_token, user_from_token)
         end
       else
-        logger.debug("Direct query on redis")
+        logger.debug('Direct query on redis')
         # At the end, check if the token is valid on redis server
         checked_user = user_present_on_redis?(remember_token, user_from_token)
       end
@@ -104,69 +108,18 @@ module SessionsHelper
       logger.error "User token params invalid: #{user_from_token.to_yaml}"
     else
       # check if the user id stored on redis is the same of the one in passed token
-      if user_id_from_redis && user_from_token["_id"]["$oid"] == user_id_from_redis
-        # If is correct, return the user hash and update session expiration on redis
-        checked_user = user_from_token
-        # Renew the expire in Redis
-        $redis_user.expire(token, Settings.session_expire)
-      end
+      checked_user = user_from_token if user_id_from_redis && user_from_token["_id"]["$oid"] == user_id_from_redis
     end
     checked_user
   end
 
-  # store the application (external web interface) secret in a global variable
-  def application_secret=(secret)
-    @application_secret = secret
-  end
-
-  # get the application secret
-  def application_secret
-    if @application_secret.nil?
-      # If we aren't a multi_application
-      if self.application_id.nil? && Settings.multi_application.downcase == 'false'
-        @application_secret = Settings.single_application_mode_secret
-      else
-        # check for an appllication id/secret in Redis cache
-        @application_secret = $redis_application.get(self.application_id)
-        # If we don't have the data in our Redis Cache check it in persistent DB
-        if @application_secret.nil?
-          @application_secret = Application.find(self.application_id).secret
-          unless @application_secret.nil?
-            # if we found the secret, cache it in our Redis DB
-            $redis_application.set(self.application_id,@application_secret)
-          end
-        end
-      end
-    end
-
-    @application_secret
-  end
-
-  # store the application id
-  def application_id=(id)
-    @application_id = id
-  end
-
-  # get the application id
-  def application_id
-    # If we are a multi_application
-    if @application_id.nil? && Settings.multi_application.downcase == 'true'
-      if Settings.parameters_by_header.downcase == 'true'
-        # check the header
-        @application_id = request.headers[Settings.application_name]
-      else
-        # If we haven't an application_id header, check in parameters
-        @application_id = params[Settings.application_name]
-      end
-    end
-
-    @application_id
-  end
 
   # Sign out the logged in user
   def sign_out
+    current_user.delete_refresh_token
     $redis_user.del(:remember_token)
     cookies.delete(:remember_token)
+
     self.current_user = nil
   end
 
@@ -180,7 +133,7 @@ module SessionsHelper
     unless signed_in?
       # store the actual location in a session variable
       store_location
-      redirect_to signin_url, notice: "Please sign in."
+      redirect_to signin_url, notice: 'Please sign in.'
     end
   end
 
@@ -196,4 +149,58 @@ module SessionsHelper
     session[:return_to] = request.url if request.get?
   end
 
+  # store the application (external web interface) secret in a global variable
+  def application_secret=(secret)
+    @application_secret = secret
+  end
+
+  # get the application secret
+  def application_secret
+    if @application_secret.nil?
+      if Settings.multi_application == 'false'
+        @application_secret = Settings.single_application_mode_secret
+      else
+        @application_secret = App.find(self.application_id).secret
+      end
+    end
+
+    @application_secret
+  end
+
+  # store the application id
+  def application_id=(id)
+    @application_id = id
+  end
+
+  # get the application id
+  def application_id
+    # If we are a multi_application
+    if @application_id.nil?
+      if Settings.multi_application.downcase == 'false'
+        @application_id = Settings.single_application_mode_id
+      else
+        if session[:client_id].nil?
+          if params[:client_id].nil? or params[:client_id].blank?
+            @application_id = local_app_id
+          else
+            @application_id = params[:client_id]
+          end
+        else
+          @application_id = session[:client_id]
+        end
+      end
+    end
+
+    @application_id
+  end
+
+  def local_app_id=(id)
+    @local_app_id = id
+  end
+
+  def local_app_id
+    if @local_app_id.nil?
+      @local_app_id = App.where(name: Settings.local_app_name).first.id.to_s
+    end
+  end
 end

@@ -1,4 +1,4 @@
-if Settings.billing_provider == 'stripe'
-  Stripe.api_key    = Settings.billing_provider_api_key
-  STRIPE_PUBLIC_KEY = Settings.billing_provider_public_key
+if Settings.enable_billing.downcase == 'true' and Settings.enable_stripe.downcase == 'true'
+  Stripe.api_key    = Settings.stripe_api_key
+  STRIPE_PUBLIC_KEY = Settings.stripe_public_key
 end
