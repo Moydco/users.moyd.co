@@ -18,8 +18,9 @@ class SessionsController < ApplicationController
       if user.is_admin?
         redirect_to root_path
       else
-        if App.find(application_id).name != Settings.local_app_name
-          redirect_to oauth2_authorize_path
+        if (Settings.multi_application == 'true' and App.find(application_id).name != Settings.local_app_name) or
+            (Settings.multi_application == 'false' and !session[:client_id].nil?)
+          redirect_to oauth2_authorize_path and return
         else
           # Redirect to user page if the user have not full invoice data, else redirect to application
           if user.data_complete? and user.confirmed?

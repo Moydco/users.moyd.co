@@ -10,12 +10,25 @@
   </thead>
   <tbody>
   <% @renew_tokens.each do |r| %>
-    <% r.app.name == Settings.local_app_name ? name = 'Account Admin' : name = r.app.name %>
+    <%
+       if r.app.nil?
+         name = Settings.single_application_mode_name
+         url = Settings.single_application_mode_url
+       else
+         if r.app.name == Settings.local_app_name
+           name = 'Account Admin'
+           url = root_path
+         else
+           name = r.app.name
+           url = r.app.url
+         end
+       end
+    %>
     <tr>
       <td><%= name %></td>
-      <td><%= r.app.url %></td>
+      <td><%= url %></td>
       <td><%= r.expirable_created_at.nil? ? 'never' : (r.expirable_created_at + Settings.renew_token_expire.to_i.days) %></td>
-      <% if r.app.name == Settings.local_app_name%>
+      <% if name == Settings.local_app_name%>
         <td></td>
       <% else %>
         <td><%= link_to 'Destroy', user_oauth2_path(current_user,r), method: :delete, class: 'btn btn-small btn-danger', data: { confirm: "Are you sure?" } %></td>

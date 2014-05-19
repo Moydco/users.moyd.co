@@ -194,6 +194,8 @@ GEM
     redis (3.0.7)
     redis-namespace (1.4.1)
       redis (~> 3.0.4)
+    redis-session-store (0.7.0)
+      redis
     rest-client (1.6.7)
       mime-types (>= 1.16)
     rspec-core (2.14.8)
@@ -298,6 +300,7 @@ DEPENDENCIES
   rails_config
   redis
   redis-namespace
+  redis-session-store
   rspec-rails
   sass-rails (~> 4.0.0)
   sdoc

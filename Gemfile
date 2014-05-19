@@ -72,6 +72,7 @@ gem 'multi_json'
 gem 'mongoid', github: 'mongoid/mongoid'
 gem 'redis'
 gem 'redis-namespace'
+gem 'redis-session-store'
 gem 'bloombroom'
 gem 'kaminari'
 

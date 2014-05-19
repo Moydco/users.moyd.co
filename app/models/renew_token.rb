@@ -12,7 +12,7 @@ class RenewToken
   before_create :set_expire
 
   def set_expire
-    self.expirable_created_at = Time.now unless self.app.name == Settings.local_app_name
+    self.expirable_created_at = Time.now if self.app.nil? or self.app.name == Settings.local_app_name
     true
   end
 
