@@ -1,28 +1,59 @@
 == README
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+This is a standard Rails application, so is very easy to install.
 
-Things you may want to cover:
+* You need a working server with Java, JRuby, MongoDB and Redis. I like having a different user for every Rails project and managing Ruby and Gem with rvm.
 
-* Ruby version
+* First make a git clone to imprt a copy in your server.
 
-* System dependencies
+* do a bundle install to install all gems
 
-* Configuration
+* create a file config/settings.local.yml with this content
 
-* Database creation
+# Minimum length of user password
+minimum_password_length: 8
+# Multi application or single? (false = single = fast)
+multi_application: 'false'
 
-* Database initialization
+# If running in single app mode, application secret to encrypt token
+single_application_mode_id:              'uQ923461NqgKaMWiDWOsfd234'
+single_application_mode_secret:          'W2GmQysDsYFHX3SDjxmyLOmxf234ngRlT9iPHfO-h0psL1Ezsz-KzlYjSED5ivoZ5D2342349'
+single_application_mode_name:            'AppName'
+single_application_mode_url:             'https://www.domain.tld'
+single_application_mode_path:            '/login'
+single_application_mode_enable_code:     'true'
+single_application_mode_enable_implicit: 'true'
+single_application_mode_enable_password: 'true'
 
-* How to run the test suite
+local_app_name:                          'faljkhfawnhefloewi-wfeasdacqew+3523651wcfgferwfg+weqfcqwefwe-fqweqf/q'
+# Billing provider datas
+enable_billing: 'true'
+enable_stripe: 'true'
+enable_paypal: 'true'
+stripe_api_key: 'sk_test_ub2Kg8Da9rD13k7sdvtR7k9'
+stripe_public_key: 'pk_test_jMvILwSZasdKuWb6Su0ZznaM'
 
-* Services (job queues, cache servers, search engines, etc.)
+# Mailer
+default_from_address: 'robot@domain.tld'
+my_url: 'http://127.0.0.1:3000'
 
-* Deployment instructions
+# Bloom Filter if a cache filter: if return false the token is not valid, if return true the token can be valid and needs to be checked on Redis Server
+use_bloom_filter: 'false'
+# Capacity and error rate of bloom filter
+bloom_filter_capacity: 1000000
+bloom_filter_error: 0.01
+bloom_filter_expire: 86400
 
-* ...
+# Session Expire (in second, default 1 hour)
+token_expire: 3600
+# Authorization code Expire (in second, default 1 minute)
+code_expire: 60
+# Renew token expire (in days, default 1 month)
+renew_token_expire: 60
+session_key: 'FfVfkxD2kIl8KuH0MS1q0iox9sgfdd0xAhneGBDqFqMHsViBpIrAigsdfgsFhmddOh0hgG6Q2C'
+
+* do a bundle exec puma
+
+* enjoy!
 
 
-Please feel free to use a different markup language if you do not plan to run
-<tt>rake doc:app</tt>.
