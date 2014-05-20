@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+</head>
+<body>
+<h1>Hello <%= @user.user_detail.name %>,</h1>
+<p>
+  I’m Norby, the robot of <%= @application %>.
+</p>
+<p>
+  Thank you so much: your subscription <%= @subscription.description %> has been successfully renewed and <%=@subscription.amount.tof/100%> UKP has been subtracted from your balance.<br/>
+  At the moment you have <%=@user.balance%> UKP in your account so, if you need, please go to <%= link_to @recharge_url, @recharge_url %> to top up your account.
+</p>
+<p>
+  Thanks again,
+</p>
+<p>
+  Norby, the Robot
+</p>
+<p>
+  P.S. Remember, I'm just a bit of software. So, if you have any questions
+  please first read FAQ at our web site <%= link_to @url, @url %> first
+</p>
+</body>
+</html>

@@ -1,0 +1,26 @@
+<h3>Subscriptions</h3>
+<table class="table table-striped">
+  <thead>
+  <tr>
+    <th>Code</th>
+    <th>Description</th>
+    <th>Next payment</th>
+    <th>Amount</th>
+    <th></th>
+  </tr>
+  </thead>
+  <tbody>
+  <% @subscriptions.each do |s| %>
+    <tr>
+      <td><%= s.id %></td>
+      <td><%= s.description %></td>
+      <td><%= s.next_payment.strftime("%d/%m/%Y") %></td>
+      <td><%=(s.amount.to_f/100).to_s%>£</td>
+      <td>
+        <%= link_to 'Show', user_subscription_path(s.user,s), class: 'btn btn-small btn-success'%>
+        <%= link_to 'Destroy', user_subscription_path(s.user,s), method: :delete, class: 'btn btn-small btn-danger', data: { confirm: "Are you sure?" } %>
+      </td>
+    </tr>
+  <% end %>
+  </tbody>
+</table>

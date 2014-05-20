@@ -2,6 +2,7 @@
   <ul class="nav nav-tabs nav-tabs-justified">
     <li <%= 'class=active' if controller_name =='checks'%>><%=link_to 'Home', root_path %></li>
     <li <%= 'class=active' if controller_name =='users'%>><%=link_to 'Users', users_path %></li>
+    <li <%= 'class=active' if controller_name =='subscriptions'%>><%= link_to 'Subscription', user_subscriptions_path(current_user) %></li>
     <% if Settings.multi_application == 'true' %>
       <li <%= 'class=active' if controller_name =='apps'%>><%=link_to 'Apps', user_apps_path(current_user) %></li>
     <% end %>

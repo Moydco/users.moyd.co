@@ -84,6 +84,6 @@ class AppsController < ApplicationController
   private
 
   def app_params
-    params.require(:app).permit(:name, :url, :path, :enable_code, :enable_implicit, :enable_password )
+    params.require(:app).permit(:name, :url, :path, :enable_code, :enable_implicit, :enable_password, :auto_renew )
   end
 end

@@ -25,6 +25,8 @@ UsersMoydCo::Application.routes.draw do
     end
     resources :consumes,    only: [:create]
 
+    resources :subscriptions
+
     member do
       get :validate_token
       put :validate_token_do

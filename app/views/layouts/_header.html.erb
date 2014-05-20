@@ -28,6 +28,9 @@
             <% if current_user.data_complete? %>
               <li><%= link_to 'Change Password',  edit_user_path(current_user) %></li>
             <% end %>
+            <% unless current_user.is_admin? %>
+              <li><%= link_to 'Subscription', user_subscriptions_path(current_user) %></li>
+            <% end %>
             <li><%= link_to 'Linked application', user_oauth2_index_path(current_user) %></li>
             <li><%= link_to 'Logout',             signout_path, :method => :delete %></li>
           <% else %>

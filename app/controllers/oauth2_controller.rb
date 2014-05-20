@@ -112,8 +112,10 @@ class Oauth2Controller < ApplicationController
 
         if Settings.multi_application == 'true'
           app = App.where(id: params[:client_id]).first
+          auto_renew = app.auto_renew
         else
           app = nil
+          auto_renew = Settings.single_application_mode_auto_renew == 'true'
         end
         # check if the password is correct
         user = User.where(email: params[:username].downcase).first
@@ -121,20 +123,31 @@ class Oauth2Controller < ApplicationController
           # Sign in user definitively
           sign_in user
 
-          # generate the refresh token, if tere isn't one
-          renew_token = RenewToken.where(app: app, user: current_user).first
-          if renew_token.nil?
-            renew_token = RenewToken.new(app: app, user: current_user)
-            renew_token.save
+          if auto_renew
+            output = {
+                access_token: current_user.generate_token(params[:client_id]),
+                expires_in: Settings.token_expire,
+                restricted_to: [],
+                token_type: 'bearer'
+            }
+          else
+            # generate the refresh token, if there isn't one
+            renew_token = RenewToken.where(app: app, user: current_user).first
+            if renew_token.nil?
+              renew_token = RenewToken.new(app: app, user: current_user)
+              renew_token.save
+            end
+
+            output = {
+                access_token: current_user.generate_token(params[:client_id]),
+                expires_in: Settings.token_expire,
+                restricted_to: [],
+                token_type: 'bearer',
+                refresh_token: renew_token.id.to_s
+            }
           end
 
-          output = {
-              access_token: current_user.generate_token(params[:client_id]),
-              expires_in: Settings.token_expire,
-              restricted_to: [],
-              token_type: 'bearer',
-              refresh_token: renew_token.id.to_s
-          }
+
           render json: output.to_json, status: 200
         else
           error = {
@@ -183,7 +196,7 @@ class Oauth2Controller < ApplicationController
             user = renew_token.user
 
             sign_in user
-            # generate the refresh token, if tere isn't one
+            # generate the refresh token, if there isn't one
             renew_token.destroy
             renew_token = RenewToken.new(app: app, user: current_user)
             renew_token.save
@@ -214,14 +227,29 @@ class Oauth2Controller < ApplicationController
           user = rt.user
 
           sign_in(user)
+          if Settings.multi_application == 'true'
+            auto_renew = rt.app.auto_renew
+          else
+            auto_renew = Settings.single_application_mode_auto_renew == 'true'
+          end
 
-          output = {
-              access_token: current_user.generate_token(params[:client_id]),
-              expires_in: Settings.token_expire,
-              restricted_to: [],
-              token_type: 'bearer',
-              refresh_token: renew_token_id
-          }
+          if auto_renew
+            output = {
+                access_token: current_user.generate_token(params[:client_id]),
+                expires_in: Settings.token_expire,
+                restricted_to: [],
+                token_type: 'bearer'
+            }
+          else
+            output = {
+                access_token: current_user.generate_token(params[:client_id]),
+                expires_in: Settings.token_expire,
+                restricted_to: [],
+                token_type: 'bearer',
+                refresh_token: renew_token_id
+            }
+
+          end
           render json: output.to_json, status: 200
         end
       else
@@ -383,14 +411,20 @@ class Oauth2Controller < ApplicationController
         end
       end
     else
-      if Settings.single_application_mode_id != client_id or Settings.single_application_mode_secret != client_secret
+      if Settings.single_application_mode_id != client_id
         error = true
         url = generate_url(Settings.single_application_mode_url + Settings.single_application_mode_path, error: 'access_denied', error_description: 'App id and/or secret incorrect', state:state)
         redirect_to url
-      elsif Settings.single_application_mode_enable_code == 'false' and response_type == 'code'
-        error = true
-        url = generate_url(Settings.single_application_mode_url + Settings.single_application_mode_path, error: 'unsupported_response_type', error_description: 'Code response type not allowed', state:state)
-        redirect_to url
+      elsif response_type == 'code'
+        if  Settings.single_application_mode_enable_code == 'false'
+          error = true
+          url = generate_url(Settings.single_application_mode_url + Settings.single_application_mode_path, error: 'unsupported_response_type', error_description: 'Code response type not allowed', state:state)
+          redirect_to url
+        elsif Settings.single_application_mode_secret != client_secret
+          error = true
+          url = generate_url(Settings.single_application_mode_url + Settings.single_application_mode_path, error: 'access_denied', error_description: 'App id and/or secret incorrect', state:state)
+          redirect_to url
+        end
       elsif Settings.single_application_mode_enable_implicit == 'false' and response_type == 'token'
         error = true
         url = generate_url(Settings.single_application_mode_url + Settings.single_application_mode_path, error: 'unsupported_response_type', error_description: 'Token (implicit) response type not allowed', state:state)

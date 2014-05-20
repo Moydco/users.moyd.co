@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+</head>
+<body>
+<h1>Hello <%= @user.user_detail.name %>,</h1>
+<p>
+  I’m Norby, the robot of <%= @application %>.
+</p>
+<p>
+  Huston, I have a problem: your subscription <%= @subscription.description %> has expired today, but at the moment you have only <%=@user.balance%> UKP in your account so I'm not able to renew it.<br/>
+  Don't worry, I'll retry automatically in <%= Settings.grey_days %> and <%=@subscription.amount.tof/100%> UKP will be subtracted from your balance.<br/>
+  At the moment you have <%=@user.balance%> UKP in your account so, in the meantime, please go to <%= link_to @recharge_url, @recharge_url %> to top up your account.
+</p>
+<p>
+  Thanks again,
+</p>
+<p>
+  Norby, the Robot
+</p>
+<p>
+  P.S. Remember, I'm just a bit of software. So, if you have any questions
+  please first read FAQ at our web site <%= link_to @url, @url %> first
+</p>
+</body>
+</html>

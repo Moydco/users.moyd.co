@@ -7,7 +7,12 @@ module SessionsHelper
     # update timestamp, IP address, refresh token data
     user = user.touch_login(request.remote_ip)
     # create the token and in store it on our Redis DB
-    remember_token = user.store_user_session_in_redis(self.application_id)
+    if Settings.multi_application == 'true' or self.application_id == Settings.single_application_mode_id
+      auto_renew = Settings.single_application_mode_auto_renew
+    else
+      auto_renew = App.find(self.application_id).auto_renew
+    end
+    remember_token = user.store_user_session_in_redis(self.application_id, auto_renew)
     logger.debug "Token saved on redis while sign_in: #{remember_token}"
     # set a cookie on client browser with the user token, so he can browse "logged in" views on this site
     cookies.permanent[:remember_token] = remember_token
@@ -100,7 +105,7 @@ module SessionsHelper
   def user_present_on_redis?(remember_token, user_from_token)
     checked_user = nil
     # first we get the user id from redis server: if not present return nil
-    user_id_from_redis = $redis_user.get(remember_token)
+    user_id_from_redis = JSON.parse($redis_user.get(remember_token)) unless $redis_user.get(remember_token).nil?
 
     logger.debug("User_id from redis: #{user_id_from_redis}")
     logger.debug("User_from_token: #{user_from_token}")
@@ -108,7 +113,12 @@ module SessionsHelper
       logger.error "User token params invalid: #{user_from_token.to_yaml}"
     else
       # check if the user id stored on redis is the same of the one in passed token
-      checked_user = user_from_token if user_id_from_redis && user_from_token["_id"]["$oid"] == user_id_from_redis
+      if user_id_from_redis && user_from_token["_id"]["$oid"] == user_id_from_redis[0]
+        checked_user = user_from_token
+        if user_id_from_redis[1]
+          $redis_user.expire(remember_token, Settings.token_expire)
+        end
+      end
     end
     checked_user
   end

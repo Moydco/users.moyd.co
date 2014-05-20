@@ -5,6 +5,10 @@
     <th>Name</th>
     <th>client_id</th>
     <th>Uri</th>
+    <th>Code</th>
+    <th>Implicit</th>
+    <th>Password</th>
+    <th>AutoRenew</th>
     <th></th>
   </tr>
   </thead>
@@ -14,6 +18,10 @@
       <td><%= a.name %></td>
       <td><%= a.id %></td>
       <td><%= a.url + a.path%></td>
+      <td><%= 'X' if a.enable_code%></td>
+      <td><%= 'X' if a.enable_implicit%></td>
+      <td><%= 'X' if a.enable_password%></td>
+      <td><%= 'X' if a.auto_renew%></td>
       <td><%= link_to 'Regenerate secret', update_secret_user_app_path(current_user,a), method: :put, class: 'btn btn-small btn-warning' %></td>
       <td>
         <% unless a.name == Settings.local_app_name %>
@@ -29,8 +37,9 @@
   <%= f.input :name %>
   <%= f.input :url %>
   <%= f.input :path %>
-  <%= f.input :enable_code, as: :boolean %>
+  <%= f.input :enable_code,     as: :boolean %>
   <%= f.input :enable_implicit, as: :boolean %>
   <%= f.input :enable_password, as: :boolean %>
+  <%= f.input :auto_renew,      as: :boolean %>
   <%= f.submit 'Create App', class: 'btn btn-success' %>
 <% end %>

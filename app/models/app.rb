@@ -28,6 +28,7 @@ class App
   field :enable_code,                 type: Boolean, default: true
   field :enable_implicit,             type: Boolean, default: false
   field :enable_password,             type: Boolean, default: false
+  field :auto_renew,                  type: Boolean, default: false
 
   attr_accessor :state
 

@@ -84,6 +84,7 @@ gem 'mongoid-grid_fs', github: 'ahoward/mongoid-grid_fs'
 gem 'stripe', :git => 'https://github.com/stripe/stripe-ruby'
 gem 'stripe_event'
 gem 'httparty'
+gem 'ice_cube'
 
 # Fogli stile
 gem 'twitter-bootstrap-rails'

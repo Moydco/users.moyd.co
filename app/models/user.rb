@@ -54,6 +54,7 @@ class User
 
   has_many :renew_tokens
   has_many :activities
+  has_many :subscriptions
 
   embeds_one :user_detail
 
@@ -88,9 +89,9 @@ class User
   end
 
   # store the access_token in a separate Redis Database
-  def store_user_session_in_redis(secret)
+  def store_user_session_in_redis(secret, auto_renew)
     remember_token = generate_token(secret)
-    $redis_user.set(remember_token,self.id.to_s)
+    $redis_user.set(remember_token,[self.id.to_s,auto_renew].to_json)
     $redis_user.expire(remember_token, Settings.token_expire)
 
     remember_token
