@@ -27,16 +27,16 @@ class UsersController < ApplicationController
 
   # Create a new user and pre-fill empty user details
   def create
-    user = User.new(user_params)
+    @user = User.new(user_params)
 
-    if user.save
+    if @user.save
       flash[:success] = 'Welcome! Your login details are successfully stored and in a few minutes you\'ll find a confirmation email in your inbox: please approve your registration as soon as possible. In the meantime, please provide other useful information for billing and contact you.'
 
       # if all is correct, send confirmation email...
-      UserMailer.token_email(user).deliver
+      UserMailer.token_email(@user).deliver
 
       # ...sign-in user...
-      sign_in(user)
+      sign_in(@user)
 
       # ...and redirect to user page, to request invoice data
       redirect_to edit_user_user_details_path(user)

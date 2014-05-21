@@ -63,7 +63,7 @@ class User
 
   validates :password, length: { minimum: Settings.minimum_password_length }, :allow_nil => true
 
-  validates_associated :user_detail #, on: :update
+  validates_associated :user_detail, on: :update
 
   accepts_nested_attributes_for :user_detail
 
