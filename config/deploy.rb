@@ -1,5 +1,5 @@
 set :application, 'users.moyd.co'
-set :repo_url, 'git@git.azcloud.it:alberto/users-moyd-co.git'
+set :repo_url, 'https://github.com/alzuin/users.moyd.co.git'
 
 # ask :branch, proc { `git rev-parse --abbrev-ref HEAD`.chomp }
 # set :scm, :git

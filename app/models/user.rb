@@ -151,6 +151,10 @@ class User
   end
 
   def add_local_app
-    RenewToken.create(user: self, app: App.where(name: Settings.local_app_name).first)
+    if Settings.multi_application == 'false'
+      RenewToken.create(user: self, app: nil)
+    else
+      RenewToken.create(user: self, app: App.where(name: Settings.local_app_name).first)
+    end
   end
 end
