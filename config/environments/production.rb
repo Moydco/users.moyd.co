@@ -87,4 +87,6 @@ UsersMoydCo::Application.configure do
       :authentication => 'login', # Mandrill supports 'plain' or 'login'
       :domain => 'moyd.co', # your domain to identify your server when connecting
   }
+
+  config.action_mailer.default_url_options = { :host => Settings.my_url }
 end
