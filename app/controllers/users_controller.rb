@@ -39,7 +39,7 @@ class UsersController < ApplicationController
       sign_in(@user)
 
       # ...and redirect to user page, to request invoice data
-      redirect_to edit_user_user_details_path(user)
+      redirect_to edit_user_user_details_path(@user)
     else
       flash.now[:error]='We are unable to create your account'
       render 'new'
