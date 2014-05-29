@@ -190,7 +190,7 @@ module SessionsHelper
         @application_id = Settings.single_application_mode_id
       else
         if session[:client_id].nil?
-          if params[:client_id].nil? or params[:client_id].blank?
+          if (params[:client_id].nil? or params[:client_id].blank?) and (params["client_id"].nil? or params["client_id"].blank?)
             @application_id = local_app_id
           else
             @application_id = params[:client_id]

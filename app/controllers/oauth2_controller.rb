@@ -36,6 +36,7 @@ class Oauth2Controller < ApplicationController
 
     unless check_app_auth(session[:client_id], session[:client_secret], session[:response_type], session[:state])
       if signed_in?
+        logger.debug "Signed in"
         if Settings.multi_application == 'true'
           app = App.where(id: session[:client_id]).first
           # If the user has already authorized the app, reply, else request the authorization
@@ -53,6 +54,7 @@ class Oauth2Controller < ApplicationController
           reply_authorize(session[:response_type], uri, session[:state], user_token, renew_token)
         end
       else
+        logger.debug "Not signed in"
         redirect_to signin_path
       end
     end
@@ -352,7 +354,7 @@ class Oauth2Controller < ApplicationController
     destroy_session
 
     if response_type == 'token'
-      url = generate_url(uri, access_token: access_token, renew_token: renew_token.id.to_s, state:state)
+      url = generate_url(uri, access_token: access_token, renew_token: renew_token.id.to_s, exprires_in: Settings.token_expire, state:state)
       redirect_to url
     elsif response_type == 'code'
       code = renew_token.create_code_token(renew_token.id.to_s)
@@ -367,7 +369,11 @@ class Oauth2Controller < ApplicationController
   # Generate the URL to redirect
   def generate_url(url, params = {})
     uri = URI(url)
-    uri.query = params.to_query
+    if Settings.get_params_char == '#'
+      uri.fragment = params.to_query
+    else
+      uri.query = params.to_query
+    end
     uri.to_s
   end
 

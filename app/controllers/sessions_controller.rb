@@ -16,6 +16,7 @@ class SessionsController < ApplicationController
       # Sign in user definitively
       sign_in user
       if user.is_admin?
+        flash[:success] = "Hello my administrator!"
         redirect_to root_path
       else
         if (Settings.multi_application == 'true' and App.find(application_id).name != Settings.local_app_name) or
