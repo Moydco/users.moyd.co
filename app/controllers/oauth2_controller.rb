@@ -354,7 +354,7 @@ class Oauth2Controller < ApplicationController
     destroy_session
 
     if response_type == 'token'
-      url = generate_url(uri, access_token: access_token, renew_token: renew_token.id.to_s, exprires_in: Settings.token_expire, state:state)
+      url = generate_url(uri, callback: 'x', access_token: access_token, renew_token: renew_token.id.to_s, exprires_in: Settings.token_expire, state:state)
       redirect_to url
     elsif response_type == 'code'
       code = renew_token.create_code_token(renew_token.id.to_s)
