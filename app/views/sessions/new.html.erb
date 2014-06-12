@@ -1,7 +1,8 @@
-<h1>User Login</h1>
-<div class="row">
+<div class="row" style="margin-top: -50px">
   <div class="span6 offset3">
-    <% unless @application.nil? %>
+    <% if @application.nil? %>
+      <h3>Login to <%= Settings.single_application_mode_name %></h3>
+    <% else %>
       <h3>Welcome to <%= @application.name %> login system</h3>
     <% end %>
     <%# form_for(@session, :url => sessions_path, html: {role: 'form' }) do |f| %>
@@ -16,7 +17,6 @@
 
       <%= f.submit 'Log in', class: 'btn btn-large btn-primary' %>
     <% end %>
-    <p>New user? <%= link_to "Sign up now!", new_user_path %></p>
-    <p>I don't remember my email: <%= link_to 'please, help me', password_lost_sessions_url %>!</p>
+    <p>I don't remember my password: <%= link_to 'please, help me', password_lost_sessions_url %>!</p>
   </div>
 </div>
