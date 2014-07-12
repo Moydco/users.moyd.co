@@ -44,7 +44,7 @@ class SessionsController < ApplicationController
   def destroy
     logger.info('Inside destroy')
     # sign_out
-    flash[:success] = 'See you later...'
+    # flash[:success] = 'See you later...'
     redirect_to root_path
   end
 
