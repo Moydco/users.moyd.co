@@ -126,6 +126,8 @@ module SessionsHelper
 
   # Sign out the logged in user
   def sign_out
+    logger.info('Inside sig_out')
+    logger.info('Token: ' + token)
     current_user.delete_refresh_token
     $redis_user.del(token)
     cookies.delete(token)
