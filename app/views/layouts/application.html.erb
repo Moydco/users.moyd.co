@@ -20,15 +20,15 @@
 </head>
 <body>
 
-<%= render 'layouts/header' unless controller_name == 'sessions' and action_name == 'new'%>
+<%= render 'layouts/header' unless controller_name == 'sessions' and (action_name == 'new' or action_name == 'create' ) %>
 <%= render 'layouts/flashes' %>
 <div class="container">
-  <%= render 'layouts/subnav'  unless controller_name == 'sessions' and action_name == 'new' %>
+  <%= render 'layouts/subnav'  unless controller_name == 'sessions' and (action_name == 'new' or action_name == 'create' ) %>
   <%= yield %>
 </div>
 <div class="container-narrow">
   <div class="page-footer">
-    <%= render 'layouts/footer'  unless controller_name == 'sessions' and action_name == 'new' %>
+    <%= render 'layouts/footer'  unless controller_name == 'sessions' and (action_name == 'new' or action_name == 'create' )%>
   </div>
 </div>
 

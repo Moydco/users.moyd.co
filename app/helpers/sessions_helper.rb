@@ -127,8 +127,8 @@ module SessionsHelper
   # Sign out the logged in user
   def sign_out
     current_user.delete_refresh_token
-    $redis_user.del(:remember_token)
-    cookies.delete(:remember_token)
+    $redis_user.del(token)
+    cookies.delete(token)
 
     self.current_user = nil
   end
