@@ -42,7 +42,8 @@ class SessionsController < ApplicationController
 
   # sign out user and redirect to application home
   def destroy
-    sign_out
+    logger.info('Inside destroy')
+    # sign_out
     flash[:success] = 'See you later...'
     redirect_to root_path
   end
