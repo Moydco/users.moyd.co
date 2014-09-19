@@ -14,7 +14,10 @@ class Activity
   after_create :update_balance
 
   def update_balance
-    puts self
+    puts "Kind: #{self.kind}"
+    puts "Amount: #{self.amount}"
+    puts "Balance: #{self.user.balance}"
+
     if kind == 'topup'
       self.user.update_attribute(:balance, self.user.balance + self.amount)
     elsif kind == 'voucher'
