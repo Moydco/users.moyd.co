@@ -5,8 +5,9 @@ class ConsumesController < ApplicationController
   def create
     @amount = params[:amount]
     @user = User.find(params[:user_id])
-    logger.debug "User id #{@user.id.to_s}"
-    logger.debug "User id from token #{current_user.id.to_s}"
+    logger.info "User id #{@user.id.to_s}"
+    logger.info "User id from token #{current_user.id.to_s}"
+    logger.info "User balance #{current_user.balance.to_s}"
 
     if @user != current_user
       render text: 'User not correct', status: 500

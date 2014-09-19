@@ -13,7 +13,7 @@ set :repo_url, 'https://github.com/alzuin/users.moyd.co.git'
 
 # set :default_env, { path: "/opt/ruby/bin:$PATH" }
 # set :keep_releases, 5
-set :linked_files, %w{config/settings.local.yml config/mongoid.yml}
+set :linked_files, %w{config/settings.local.yml config/mongoid.yml config/newrelic.yml}
 
 namespace :deploy do
 
