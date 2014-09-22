@@ -53,4 +53,13 @@ class ChecksController < ApplicationController
       render text: 'Error', status: 401
     end
   end
+
+  def credit
+    if signed_in?
+      render text: current_user.balance, status: 200
+    else
+      render text: 'Error', status: 401
+    end
+  end
+
 end

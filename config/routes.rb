@@ -7,7 +7,11 @@ UsersMoydCo::Application.routes.draw do
   post 'oauth2/token',  to: 'oauth2#token_request'
   post 'oauth2/revoke'
 
-  resources :checks, only: [:index, :create]
+  resources :checks, only: [:index, :create] do
+    collection do
+      post :credit
+    end
+  end
 
   resources :users do
     resources :oauth2, only: [:index, :destroy]
