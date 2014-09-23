@@ -1,4 +1,4 @@
-source 'https://rubygems.org'
+source 'https://rubygems.o6403rg'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '4.0.2'
@@ -46,7 +46,6 @@ gem 'capistrano-rvm', group: :development
 gem 'capistrano-ext', group: :development
 gem 'capistrano-puma', group: :development
 gem 'letter_opener', group: :development
-gem 'newrelic_rpm'
 
 # Use Capistrano for deployment
 # gem 'capistrano', group: :development

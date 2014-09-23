@@ -9,7 +9,7 @@ UsersMoydCo::Application.routes.draw do
 
   resources :checks, only: [:index, :create] do
     collection do
-      post :credit
+      get :credit
     end
   end
 
