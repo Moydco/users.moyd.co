@@ -7,6 +7,7 @@ UsersMoydCo::Application.routes.draw do
   post 'oauth2/token',  to: 'oauth2#token_request'
   post 'oauth2/revoke'
 
+  match 'check', to: 'check#index', via: [:options]
   resources :checks, only: [:index, :create] do
     collection do
       get :credit
