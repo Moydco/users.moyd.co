@@ -8,6 +8,8 @@ UsersMoydCo::Application.routes.draw do
   post 'oauth2/revoke'
 
   match 'checks/credit', to: 'checks#credit', via: [:options]
+  match 'sessions/destroy', to: 'sessions#destroy', via: [:options]
+
   resources :checks, only: [:index, :create] do
     collection do
       get :credit
