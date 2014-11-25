@@ -126,7 +126,7 @@ module SessionsHelper
 
   # Sign out the logged in user
   def sign_out
-    token = cookies[:remember_token]
+    token = cookies[:remember_token] || token
     logger.info('Inside sign_out')
     logger.info('Token: ' + token)
     current_user.delete_refresh_token
